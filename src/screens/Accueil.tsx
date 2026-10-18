@@ -11,6 +11,8 @@ import { victoires } from '../engine/victoires'
 import type { Profil, Seance, TypeSeance } from '../types'
 import { Bouton, Carte, Pastille, Titre } from '../components/ui'
 import { CheckMatin } from './CheckMatin'
+import { chargerCoach, coachDuJour } from '../db/sync'
+import type { MotCoach } from '../types'
 
 export const NOMS_SEANCES: Record<TypeSeance, string> = {
   A: 'Force kettlebell',
@@ -34,6 +36,10 @@ export function Accueil({ profil }: { profil: Profil }) {
   const tests = useLiveQuery(() => db.tests.toArray(), [])
   const [apercu, setApercu] = useState<Seance | null>(null)
   const [modifierCheck, setModifierCheck] = useState(false)
+  const [coach, setCoach] = useState<MotCoach | null>(null)
+  useEffect(() => {
+    chargerCoach().then((c) => setCoach(coachDuJour(c, auj)))
+  }, [auj])
 
   const jAuj = journal?.find((j) => j.date === auj)
   const checkFait = jAuj?.energie != null && jAuj?.sommeil != null
@@ -71,6 +77,13 @@ export function Accueil({ profil }: { profil: Profil }) {
           <p className="text-xs text-zinc-400">séances d’affilée</p>
         </div>
       </header>
+
+      {coach && (
+        <Carte className="border border-sky-400/30">
+          <Titre>Le mot du coach</Titre>
+          <p className="text-lg leading-relaxed">{coach.message}</p>
+        </Carte>
+      )}
 
       {(!checkFait || modifierCheck) && (
         <CheckMatin date={auj} existant={jAuj} veille={journal.find((j) => j.date === ajouterJours(auj, -1))} onFini={() => setModifierCheck(false)} />

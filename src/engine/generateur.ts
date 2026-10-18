@@ -4,6 +4,7 @@ import type {
   Exercice,
   Famille,
   Materiel,
+  MotCoach,
   PrescriptionExercice,
   Profil,
   SeancePlanifiee,
@@ -24,6 +25,7 @@ export interface ContexteGeneration {
   forme: ScoreForme
   messageCourse?: string // dernier changement de la course, pour la raison du jour
   numeroSeance?: number // compteur de séances, fait tourner échauffements et retours au calme
+  coach?: MotCoach // consignes du jour écrites par Claude (déjà filtrées sur la date)
 }
 
 interface Emplacement {
@@ -140,6 +142,16 @@ function choisir(ctx: ContexteGeneration, emp: Emplacement, dejaPris: Set<string
   return ex ? { ex } : undefined
 }
 
+// Consigne du coach : remplacer un exercice par un autre, seulement si le remplaçant est autorisé.
+function remplacementCoach(ctx: ContexteGeneration, c: Choix | undefined, dejaPris: Set<string>): Choix | undefined {
+  if (!c) return c
+  // Le coach peut viser l'exercice prévu, ou celui que l'app a déjà écarté après une douleur.
+  const r = ctx.coach?.seance?.remplacer?.find((x) => x.de === c.ex.id || x.de === c.remplace?.id)
+  const par = r && ctx.lib.find((e) => e.id === r.par)
+  if (!par || !estAutorise(par, ctx.profil) || par.intensite === 'haute' || dejaPris.has(par.id) || ctx.etats[par.id]?.douleur) return c
+  return { ex: par, remplace: c.remplace }
+}
+
 function prescrire(ctx: ContexteGeneration, ex: Exercice, seriesDefaut: number, reposSec: number): PrescriptionExercice {
   const etat = ctx.etats[ex.id] ?? etatInitial(ex, ctx.profil.kettlebells, seriesDefaut)
   return {
@@ -193,7 +205,7 @@ export function genererSeance(ctx: ContexteGeneration): SeancePlanifiee {
 
   const ajouter = (emps: Emplacement[], repos: number) => {
     emps.forEach((emp, i) => {
-      const c = choisir(ctx, emp, dejaPris, i)
+      const c = remplacementCoach(ctx, choisir(ctx, emp, dejaPris, i), dejaPris)
       if (!c) return
       dejaPris.add(c.ex.id)
       if (c.remplace) remplacements.push(`${c.remplace.nom} remplacé par ${c.ex.nom} après la douleur signalée`)
@@ -231,13 +243,18 @@ export function genererSeance(ctx: ContexteGeneration): SeancePlanifiee {
   const retourCalme = tourner(ctx, 'retour_calme', ctx.type === 'express' ? 1 : 2, tour).map(simple)
 
   let principalFinal = principal
-  const allegee = ctx.forme.bas
+  const consigne = ctx.coach?.seance
+  const allegee = ctx.forme.bas || !!consigne?.alleger
   if (allegee) {
     principalFinal = principal.map(alleger)
     if (course) course = allegerCourse(course)
+  } else if (consigne?.durcir) {
+    principalFinal = principal.map((p) => (p.series > 1 ? { ...p, series: Math.min(4, p.series + 1) } : p))
   }
 
-  if (allegee) raisons.unshift(`Forme basse ce matin (${ctx.forme.detail}) : séance allégée d'environ 20 %`)
+  if (ctx.forme.bas) raisons.unshift(`Forme basse ce matin (${ctx.forme.detail}) : séance allégée d'environ 20 %`)
+  if (consigne && (consigne.alleger || consigne.durcir || consigne.remplacer?.length))
+    raisons.unshift(`Coach : ${ctx.coach?.raison ?? (consigne.alleger ? 'séance allégée' : consigne.durcir ? 'une série de plus' : 'exercice changé')}`)
   raisons.push(...remplacements)
   if (raisons.length < 2) {
     const changements = principal
@@ -251,7 +268,11 @@ export function genererSeance(ctx: ContexteGeneration): SeancePlanifiee {
   }
   if (raisons.length === 0) raisons.push(raisonParDefaut(ctx.type, phase))
 
-  const raison = raisons.slice(0, 2).join(' ; ') + '.'
+  const raison = raisons
+    .slice(0, 2)
+    .map((r) => r.trim().replace(/\.$/, ''))
+    .map((r) => r.charAt(0).toUpperCase() + r.slice(1))
+    .join('. ') + '.'
   const plan = { type: ctx.type, echauffement, principal: principalFinal, retourCalme, course, raison, allegee }
   return { ...plan, dureeEstimeeMin: dureeEstimee(plan, ctx.lib) }
 }

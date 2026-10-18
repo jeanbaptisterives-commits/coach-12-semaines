@@ -155,7 +155,7 @@ describe('génération de séance', () => {
     const plan = genererSeance(ctx({ etats }))
     expect(ids(plan.principal)).not.toContain('pompes')
     expect(ids(plan.principal)).toContain('pompes_inclinees')
-    expect(plan.raison).toContain('pompes remplacé par pompes_inclinees')
+    expect(plan.raison).toContain('Pompes remplacé par pompes_inclinees')
   })
 
   it('forme basse : volume réduit d’environ 20 % et raison en tête', () => {
@@ -341,5 +341,34 @@ describe('stats', () => {
     expect(b.faites).toBe(0)
     expect(b.aTravailler).toMatch(/3 séances sautées/)
     expect(b.partSansTabac).toBe(0)
+  })
+})
+
+describe('consignes du coach', () => {
+  const coach = (seance: NonNullable<import('../types').MotCoach['seance']>, raison = 'grosse semaine au resto') => ({ date: '2026-10-20', message: 'm', raison, seance })
+  it('alléger : séance allégée, raison du coach en tête', () => {
+    const p = genererSeance(ctx({ semaine: 6, coach: coach({ alleger: true }) }))
+    expect(p.allegee).toBe(true)
+    expect(p.raison).toMatch(/^Coach : grosse semaine au resto/)
+  })
+  it('durcir : une série de plus, plafonnée à 4', () => {
+    const normal = genererSeance(ctx({ semaine: 6 }))
+    const dur = genererSeance(ctx({ semaine: 6, coach: coach({ durcir: true }) }))
+    expect(dur.principal[0].series).toBe(Math.min(4, normal.principal[0].series + 1))
+  })
+  it('remplacer : le choix du coach l’emporte sur l’alternative automatique après douleur', () => {
+    const etats = { pompes: { ...etatInitial(parId('pompes'), KBS, 2), douleur: true } }
+    const p = genererSeance(ctx({ etats, coach: coach({ remplacer: [{ de: 'pompes', par: 'pompes_genoux' }] }) }))
+    expect(ids(p.principal)).toContain('pompes_genoux')
+    expect(ids(p.principal)).not.toContain('pompes_inclinees')
+    expect(p.raison).toMatch(/^Coach : grosse semaine au resto\. Pompes remplacé par pompes_genoux/)
+  })
+  it('remplacer : accepté si sûr, ignoré si dangereux pour les épaules', () => {
+    const ok = genererSeance(ctx({ coach: coach({ remplacer: [{ de: 'pompes', par: 'pompes_genoux' }] }) }))
+    expect(ids(ok.principal)).toContain('pompes_genoux')
+    expect(ids(ok.principal)).not.toContain('pompes')
+    const ko = genererSeance(ctx({ coach: coach({ remplacer: [{ de: 'pompes', par: 'kb_press' }] }) }))
+    expect(ids(ko.principal)).toContain('pompes')
+    expect(ids(ko.principal)).not.toContain('kb_press')
   })
 })

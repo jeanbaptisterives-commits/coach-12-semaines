@@ -1,0 +1,56 @@
+#!/bin/bash
+# Coach 12 semaines — chaque matin 9 h (launchd com.almadhome.coach12-matin).
+# Lit les données de l'app de sport de JB sur le Mac, demande à Claude le mot du jour et les
+# ajustements, valide la réponse, écrit coach.json (lu par l'app) et prévient JB sur Telegram
+# seulement s'il y a un ajustement.
+set -u
+APP="$HOME/Work/coach-12-semaines"
+DOSSIER="${COACH_DONNEES:-$HOME/Work/coach-12-semaines-donnees}"
+LOG="${COACH_LOG:-$HOME/.claude/logs/coach12-matin.log}"
+NODE=/opt/homebrew/bin/node
+JB=8745277571
+AUJ=$(date +%F)
+exec >> "$LOG" 2>&1
+echo "[$(date '+%F %T')] début"
+
+[ -f "$DOSSIER/donnees.json" ] || { echo "pas de données, rien à faire"; exit 0; }
+source "$HOME/.claude/scripts/lib-claude-headless.sh"
+
+RESUME=$("$NODE" "$APP/serveur/resume.mjs" resumer "$DOSSIER/donnees.json" "$AUJ") || { echo "résumé impossible"; exit 1; }
+
+PROMPT="Tu es le coach de JB : préparateur physique expert (kettlebell, course), direct, tutoiement, zéro morale.
+Il suit un programme de 12 semaines (3 séances de 30 min au réveil : A force kettlebell, B cardio course-marche, C circuit poids du corps + mobilité). Objectifs : énergie et mental d'abord, puis muscle et mobilité ; courir 5 km sans galérer, plus de pompes, plus d'énergie au réveil.
+Contraintes absolues : épaules fragiles, jamais de mouvement au-dessus de la tête ; fractionné et haute intensité interdits sans feu vert médical ; tu n'es pas médecin (douleur qui dure = voir un médecin, une phrase, sans dramatiser).
+Cannabis : il veut changer de mode (sortir le tabac, passer au vaporisateur, zéro joint avant les séances), pas forcément arrêter. Tu peux faire un constat chiffré, jamais la morale.
+
+L'app ajuste déjà seule les séances (double progression, séance allégée si forme basse, alternative après douleur). Tu n'interviens que si tu vois ce que l'app ne voit pas : une tendance sur plusieurs jours, une charge clairement trop légère ou trop lourde, une douleur qui revient, une semaine chargée.
+
+Voici ses données :
+$RESUME
+
+Réponds UNIQUEMENT par un objet JSON, sans texte autour :
+{
+  \"message\": \"2 ou 3 phrases pour aujourd'hui, en français parfait, concrètes, avec un chiffre tiré de ses données si possible. Pas de tiret long.\",
+  \"raison\": \"une phrase courte, seulement si tu ajustes la séance\",
+  \"seance\": { \"alleger\": true } ou { \"durcir\": true } ou { \"remplacer\": [{\"de\": \"id\", \"par\": \"id sûr\"}] } ou {},
+  \"reglages\": { \"charges\": {\"id\": kg}, \"repsCible\": {\"id\": n}, \"course\": {\"courseSec\": n, \"marcheSec\": n, \"blocs\": n, \"continueMin\": n} } ou {}
+}
+Par défaut seance et reglages sont vides : n'ajuste que si c'est justifié par les données."
+
+# Garde-fou : jamais plus de 4 min (un appel bloqué ne doit pas laisser le job pendre).
+REPONSE=$(perl -e 'alarm 240; exec @ARGV' "$CLAUDE_BIN" --print --permission-mode bypassPermissions --settings "$AUTOMATION_SETTINGS" \
+  --no-session-persistence --allowedTools "" --model claude-sonnet-5-5 "$PROMPT" < /dev/null 2>/dev/null | grep -vE '^(Warning:|Permission allow rule)')
+COACH=$("$NODE" "$APP/serveur/resume.mjs" valider "$DOSSIER/donnees.json" "$AUJ" "$REPONSE") || {
+  echo "réponse invalide : $REPONSE"
+  exit 1
+}
+printf '%s\n' "$COACH" > "$DOSSIER/coach.json.tmp" && mv "$DOSSIER/coach.json.tmp" "$DOSSIER/coach.json"
+mkdir -p "$DOSSIER/historique" && cp "$DOSSIER/coach.json" "$DOSSIER/historique/coach-$AUJ.json"
+echo "coach.json écrit : $COACH"
+
+# Telegram seulement s'il y a un ajustement (séance ou réglages).
+if [ -z "${COACH_SANS_TELEGRAM:-}" ] && printf '%s' "$COACH" | grep -qE '"(seance|reglages)"'; then
+  MSG=$(printf '%s' "$COACH" | "$NODE" -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const c=JSON.parse(s);console.log("🏋️ Coach 12 semaines\n"+c.message+(c.raison?"\nAjustement : "+c.raison:"")+"\n(déjà appliqué dans l’app)")})')
+  "$HOME/.claude/scripts/tg_send.sh" "$JB" "$MSG" > /dev/null
+fi
+echo "[$(date '+%F %T')] fin"

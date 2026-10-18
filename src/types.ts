@@ -180,3 +180,22 @@ export interface SeancePlanifiee {
   allegee: boolean
   dureeEstimeeMin: number
 }
+
+// ---------- Mot du coach (écrit par Claude chaque matin sur le Mac) ----------
+
+export interface MotCoach {
+  date: string // AAAA-MM-JJ : jour pour lequel le mot et les consignes de séance valent
+  message: string // 2-3 phrases, ton direct
+  raison?: string // pourquoi la séance est ajustée, affiché dans la raison du jour
+  seance?: {
+    alleger?: boolean // -20 % de volume
+    durcir?: boolean // une série de plus sur les exercices principaux (max 4)
+    remplacer?: Array<{ de: string; par: string }>
+  }
+  // Réglages durables, appliqués une seule fois à la base (les cibles repartent de là).
+  reglages?: {
+    charges?: Record<string, number> // exerciceId -> kg
+    repsCible?: Record<string, number> // exerciceId -> reps (ou secondes)
+    course?: { courseSec: number; marcheSec: number; blocs: number; continueMin: number }
+  }
+}

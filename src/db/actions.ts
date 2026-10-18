@@ -6,6 +6,7 @@ import { genererSeance, seriesParPhase } from '../engine/generateur'
 import { appliquerProgression, etatInitial } from '../engine/progression'
 import type { EtatExercice, Profil, Seance, TypeSeance } from '../types'
 import { db, type BaseCoach } from './db'
+import { chargerCoach, coachDuJour } from './sync'
 
 export const aujourdhui = () => isoLocal(new Date())
 
@@ -26,7 +27,9 @@ export async function preparerSeance(type: TypeSeance, date = aujourdhui(), base
   const course = await etatCourse(base)
   const forme = scoreForme(await base.journal.get(date), await base.journal.get(ajouterJours(date, -1)))
   const numeroSeance = await base.seances.filter((s) => s.terminee).count()
+  const coach = coachDuJour(await chargerCoach(), date) ?? undefined
   const plan = genererSeance({
+    coach,
     type,
     semaine,
     profil,
