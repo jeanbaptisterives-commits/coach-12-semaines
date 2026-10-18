@@ -25,21 +25,15 @@ npm run build      # version de production dans dist/
 
 Règles de sécurité vérifiées par les tests : aucun exercice marqué non sûr pour les épaules n'est jamais proposé automatiquement ; fractionné, sauts et haute intensité restent verrouillés tant que « feu vert médical » n'est pas coché.
 
-## Mettre en ligne gratuitement (GitHub Pages)
+## Mettre en ligne (GitHub Pages)
 
-1. Une seule fois sur le Mac : `gh auth login` (compte GitHub, navigateur).
-2. Créer le dépôt et pousser :
-   ```bash
-   gh repo create coach-12-semaines --private --source=. --push
-   ```
-   GitHub Pages sur un dépôt privé demande un compte payant. Sur un compte gratuit, mets `--public` : le code est visible, **tes données ne le sont jamais**, elles restent sur ton téléphone.
-3. Activer Pages en mode GitHub Actions :
-   ```bash
-   gh api -X POST repos/{owner}/coach-12-semaines/pages -f build_type=workflow
-   ```
-4. Le workflow `.github/workflows/deploy.yml` lance les tests, construit et publie à chaque push. L'adresse sera `https://<ton-pseudo>.github.io/coach-12-semaines/`.
+L'app est publiée sur la branche `gh-pages`. Après une modification :
 
-Alternative sans GitHub : `npm run build`, puis glisser le dossier `dist/` sur https://app.netlify.com/drop (compte gratuit, HTTPS automatique).
+```bash
+npm run deploy     # tests, build, puis publication sur gh-pages
+```
+
+GitHub Pages sert la branche `gh-pages` en HTTPS. Le code est public, **les données ne le sont jamais** : elles restent sur le téléphone.
 
 ## Installer sur l'iPhone
 
