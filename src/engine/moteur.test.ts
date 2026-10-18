@@ -372,3 +372,40 @@ describe('consignes du coach', () => {
     expect(ids(ko.principal)).not.toContain('kb_press')
   })
 })
+
+describe('montée de variante', () => {
+  const lib = LIB.map((e) =>
+    e.id === 'pompes_inclinees' ? { ...e, mouvement: 'pompe', variante: 'facile' as const }
+    : e.id === 'pompes' ? { ...e, mouvement: 'pompe', variante: 'moyen' as const }
+    : e)
+  const inclinees = lib.find((e) => e.id === 'pompes_inclinees')!
+  it('variante maîtrisée en haut de fourchette à 4 séries : drapeau maîtrise', () => {
+    const e = { ...etatInitial(inclinees, KBS, 4), repsCible: 12 }
+    const r = appliquerProgression(inclinees, e, [s(12, 7), s(12, 7), s(12, 7), s(12, 7)], KBS, 'd')
+    expect(r.etat.maitrise).toBe(true)
+    expect(r.message).toMatch(/maîtrisé/)
+  })
+  it('la séance suivante propose la variante au-dessus', () => {
+    const etats = { pompes: { ...etatInitial(parId('pompes'), KBS, 2), douleur: true }, pompes_inclinees: { ...etatInitial(inclinees, KBS, 4), maitrise: true } }
+    // pompes en douleur → alternative pompes_inclinees, mais elle est maîtrisée → on remonte… vers pompes, en douleur : on reste sur inclinées
+    const p = genererSeance(ctx({ lib, etats }))
+    expect(ids(p.principal)).toContain('pompes_inclinees')
+    const etats2 = { pompes_inclinees: { ...etatInitial(inclinees, KBS, 4), maitrise: true } }
+    const p2 = genererSeance(ctx({ lib, etats: etats2, coach: { date: 'd', message: 'm', seance: { remplacer: [{ de: 'pompes', par: 'pompes_inclinees' }] } } }))
+    expect(ids(p2.principal)).toContain('pompes_inclinees') // le coach a le dernier mot
+  })
+})
+
+describe('montée de variante (cas direct)', () => {
+  it('référence maîtrisée : remplacée par la variante moyenne du même mouvement, raison affichée', () => {
+    const lib = LIB.map((e) =>
+      e.id === 'pompes' ? { ...e, mouvement: 'pompe', variante: 'facile' as const }
+      : e.id === 'pompes_genoux' ? { ...e, mouvement: 'pompe', variante: 'moyen' as const }
+      : e)
+    const etats = { pompes: { ...etatInitial(parId('pompes'), KBS, 4), maitrise: true, dernierChangement: 'Pompes maîtrisé : on passe à la variante plus difficile' } }
+    const p = genererSeance(ctx({ lib, etats }))
+    expect(ids(p.principal)).toContain('pompes_genoux')
+    expect(ids(p.principal)).not.toContain('pompes')
+    expect(p.raison).toContain('Pompes maîtrisé : passage à pompes_genoux')
+  })
+})

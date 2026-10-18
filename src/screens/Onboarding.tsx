@@ -58,7 +58,7 @@ export function Onboarding() {
       <h2 className="text-2xl font-bold">Ton poids aujourd’hui</h2>
       <Compteur valeur={poids} onChange={setPoids} pas={0.5} min={40} max={200} suffixe=" kg" />
       <div className="space-y-3">
-        <p className="text-zinc-300">Poids cible (facultatif)</p>
+        <p className="text-ivoire/85">Poids cible (facultatif)</p>
         {cible == null ? (
           <Bouton variante="secondaire" onClick={() => setCible(Math.round(poids - 3))}>
             Ajouter une cible
@@ -79,14 +79,14 @@ export function Onboarding() {
     </Carte>,
     <Carte key="kb" className="space-y-5">
       <h2 className="text-2xl font-bold">Tes kettlebells</h2>
-      <p className="text-zinc-400">Touche tous les poids que tu as. L’app choisit la charge de départ et monte quand tu es prêt.</p>
+      <p className="text-ivoire2">Touche tous les poids que tu as. L’app choisit la charge de départ et monte quand tu es prêt.</p>
       <div className="grid grid-cols-4 gap-2">
         {POIDS_KB.map((k) => (
           <button
             key={k}
             type="button"
             onClick={() => setKbs((l) => basculer(l, k))}
-            className={`h-14 rounded-xl text-lg font-semibold ${kbs.includes(k) ? 'bg-lime-400 text-zinc-950' : 'bg-zinc-800'}`}
+            className={`h-14 rounded-xl text-lg font-semibold ${kbs.includes(k) ? 'bg-dore text-fond' : 'bg-carte2'}`}
           >
             {k} kg
           </button>
@@ -95,22 +95,22 @@ export function Onboarding() {
     </Carte>,
     <Carte key="jours" className="space-y-5">
       <h2 className="text-2xl font-bold">Tes jours de séance</h2>
-      <p className="text-zinc-400">3 séances de 30 min au réveil. Par défaut mardi (force), jeudi (cardio), samedi (circuit et mobilité).</p>
+      <p className="text-ivoire2">3 séances de 30 min au réveil. Par défaut mardi (force), jeudi (cardio), samedi (circuit et mobilité).</p>
       <div className="grid grid-cols-7 gap-1.5">
         {JOURS.map((j) => (
           <button
             key={j.valeur}
             type="button"
             onClick={() => setJours((l) => basculer(l, j.valeur))}
-            className={`h-14 rounded-xl text-sm font-semibold ${jours.includes(j.valeur) ? 'bg-lime-400 text-zinc-950' : 'bg-zinc-800'}`}
+            className={`h-14 rounded-xl text-sm font-semibold ${jours.includes(j.valeur) ? 'bg-dore text-fond' : 'bg-carte2'}`}
           >
             {j.label}
           </button>
         ))}
       </div>
-      {jours.length !== 3 && <p className="text-amber-300">Le programme est pensé pour 3 séances par semaine.</p>}
+      {jours.length !== 3 && <p className="text-alerte">Le programme est pensé pour 3 séances par semaine.</p>}
       <div className="space-y-2">
-        <p className="text-zinc-300">Une barre de traction ?</p>
+        <p className="text-ivoire/85">Une barre de traction ?</p>
         <Choix options={[{ valeur: 'non', label: 'Non' }, { valeur: 'oui', label: 'Oui' }]} valeur={barre ? 'oui' : 'non'} onChange={(v) => setBarre(v === 'oui')} />
       </div>
     </Carte>,
@@ -120,7 +120,7 @@ export function Onboarding() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-5 px-4 pb-8 pt-[max(1.5rem,env(safe-area-inset-top))]">
       <header>
-        <p className="text-sm uppercase tracking-wider text-lime-300">12 semaines · étape {etape + 1} sur {etapes.length}</p>
+        <p className="text-sm uppercase tracking-wider text-sauge-clair">12 semaines · étape {etape + 1} sur {etapes.length}</p>
         <h1 className="mt-1 text-3xl font-bold">On fait connaissance</h1>
       </header>
       {etapes[etape]}
@@ -140,7 +140,7 @@ export function Onboarding() {
           </Bouton>
         )}
       </div>
-      {etape === 2 && kbs.length === 0 && <p className="text-center text-sm text-zinc-400">Choisis au moins une kettlebell.</p>}
+      {etape === 2 && kbs.length === 0 && <p className="text-center text-sm text-ivoire2">Choisis au moins une kettlebell.</p>}
     </main>
   )
 }

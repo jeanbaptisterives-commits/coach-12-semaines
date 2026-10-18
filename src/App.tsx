@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react'
 import { HashRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { db } from './db/db'
 import { Accueil } from './screens/Accueil'
-import { Bibliotheque } from './screens/Bibliotheque'
+import { Bibliotheque, PageExercice, PageFamille, PageMouvement } from './screens/Bibliotheque'
 import { Onboarding } from './screens/Onboarding'
 import { Reglages } from './screens/Reglages'
 import { Seance } from './screens/Seance'
@@ -32,6 +32,9 @@ function Coquille() {
           <Route path="/" element={<Accueil profil={profil} />} />
           <Route path="/seance/:type" element={<Seance profil={profil} />} />
           <Route path="/exercices" element={<Bibliotheque />} />
+          <Route path="/exercices/f/:famille" element={<PageFamille />} />
+          <Route path="/exercices/m/:mouvement" element={<PageMouvement />} />
+          <Route path="/exercices/e/:id" element={<PageExercice />} />
           <Route path="/progres" element={<Suspense fallback={null}><Progres profil={profil} /></Suspense>} />
           <Route path="/tests" element={<Tests />} />
           <Route path="/poids" element={<Poids />} />
@@ -39,14 +42,15 @@ function Coquille() {
         </Routes>
       </main>
       {!enSeance && (
-        <nav className="fixed inset-x-0 bottom-0 border-t border-zinc-800 bg-zinc-950/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+        <nav className="fixed inset-x-0 bottom-0 border-t border-ligne bg-fond/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
           <div className="mx-auto grid max-w-md grid-cols-4">
             {ONGLETS.map((o) => (
               <NavLink
                 key={o.to}
                 to={o.to}
                 end={o.to === '/'}
-                className={({ isActive }) => `flex min-h-16 flex-col items-center justify-center gap-1 text-xs ${isActive ? 'text-lime-300' : 'text-zinc-500'}`}
+                onClick={() => window.scrollTo(0, 0)}
+                className={({ isActive }) => `flex min-h-16 flex-col items-center justify-center gap-1 text-xs ${isActive ? 'text-sauge-clair' : 'text-ivoire3'}`}
               >
                 <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d={o.icone} />

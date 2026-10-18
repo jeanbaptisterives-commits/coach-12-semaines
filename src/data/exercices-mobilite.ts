@@ -20,6 +20,10 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['table'],
     objectif: 'Décoincer l’épaule en douceur en la laissant pendre et osciller.',
     muscles: ['coiffe des rotateurs', 'capsule de l’épaule'],
+    mouvement: 'mobilite_epaule',
+    variante: 'facile',
+    musclesPrincipaux: ['Coiffe des rotateurs'],
+    musclesSecondaires: [],
     miseEnPlace: 'Penché en avant, une main en appui sur une table, l’autre bras pendant, complètement relâché.',
     execution: [
       'Laisse le bras pendre comme une corde.',
@@ -47,6 +51,10 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Réapprendre à placer les omoplates en arrière et en bas, base de toute épaule saine.',
     muscles: ['rhomboïdes', 'trapèzes moyens et inférieurs'],
+    mouvement: 'stabilite_omoplates',
+    variante: 'facile',
+    musclesPrincipaux: ['Rhomboïdes', 'Trapèzes'],
+    musclesSecondaires: [],
     miseEnPlace: 'Debout ou assis, bras le long du corps, coudes fléchis à 90 degrés.',
     execution: [
       'Serre les omoplates l’une vers l’autre, comme pour pincer un crayon entre elles.',
@@ -72,6 +80,10 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Faire circuler le sang dans les épaules avant l’effort.',
     muscles: ['deltoïdes', 'coiffe des rotateurs'],
+    mouvement: 'mobilite_epaule',
+    variante: 'moyen',
+    musclesPrincipaux: ['Deltoïdes'],
+    musclesSecondaires: ['Coiffe des rotateurs'],
     miseEnPlace: 'Debout, bras tendus sur les côtés à hauteur d’épaules ou un peu plus bas.',
     execution: [
       'Fais de petits cercles vers l’avant.',
@@ -97,6 +109,8 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Ouvrir l’avant de l’épaule, souvent raide quand on fait des pompes.',
     muscles: ['pectoraux', 'deltoïdes antérieurs'],
+    musclesPrincipaux: ['Pectoraux'],
+    musclesSecondaires: ['Deltoïdes antérieurs'],
     miseEnPlace: 'Avant-bras contre un encadrement de porte ou un mur, coude à hauteur d’épaule ou un peu plus bas.',
     execution: [
       'Avance doucement le buste jusqu’à sentir l’étirement devant l’épaule.',
@@ -123,6 +137,10 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['tapis', 'kettlebell'],
     objectif: 'Renforcer la coiffe des rotateurs, qui protège l’épaule.',
     muscles: ['infra-épineux', 'petit rond', 'deltoïde postérieur'],
+    mouvement: 'mobilite_epaule',
+    variante: 'difficile',
+    musclesPrincipaux: ['Coiffe des rotateurs'],
+    musclesSecondaires: ['Deltoïdes postérieurs'],
     miseEnPlace: 'Allongé sur le côté, coude du dessus collé à la hanche, plié à 90 degrés. Une serviette roulée entre le coude et le corps. Sans charge ou kettlebell très légère.',
     execution: [
       'Fais pivoter l’avant-bras vers le plafond, le coude ne bouge pas.',
@@ -151,6 +169,10 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Renforcer le bas des trapèzes et les muscles qui tiennent les omoplates.',
     muscles: ['trapèzes inférieurs et moyens', 'rhomboïdes', 'deltoïdes postérieurs'],
+    mouvement: 'stabilite_omoplates',
+    variante: 'difficile',
+    musclesPrincipaux: ['Trapèzes', 'Rhomboïdes'],
+    musclesSecondaires: ['Deltoïdes postérieurs', 'Coiffe des rotateurs'],
     miseEnPlace: 'Allongé sur le ventre, front sur une serviette, pouces vers le plafond.',
     execution: [
       'T : bras écartés sur les côtés, décolle-les de quelques centimètres en serrant les omoplates.',
@@ -179,6 +201,10 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Réveiller le dentelé antérieur, muscle clé pour stabiliser l’omoplate pendant les pompes.',
     muscles: ['dentelé antérieur', 'trapèzes', 'rhomboïdes'],
+    mouvement: 'stabilite_omoplates',
+    variante: 'moyen',
+    musclesPrincipaux: ['Dentelé antérieur'],
+    musclesSecondaires: ['Trapèzes', 'Rhomboïdes'],
     miseEnPlace: 'En haut de pompe ou sur les genoux, bras tendus.',
     execution: [
       'Sans plier les coudes, laisse la poitrine descendre entre les omoplates.',
@@ -205,6 +231,8 @@ export const EXERCICES_MOB_EPAULES: Exercice[] = [
     materiel: ['kettlebell'],
     objectif: 'Faire tourner une kettlebell autour de la tête. Les épaules passent en position haute, à éviter avec des épaules fragiles.',
     muscles: ['deltoïdes', 'trapèzes', 'triceps', 'abdominaux'],
+    musclesPrincipaux: ['Deltoïdes', 'Trapèzes'],
+    musclesSecondaires: ['Triceps', 'Abdominaux'],
     miseEnPlace: 'Kettlebell tenue par les cornes, à l’envers, devant la poitrine.',
     execution: [
       'Fais passer la kettlebell autour de la tête, près de la nuque.',
@@ -236,6 +264,10 @@ export const EXERCICES_MOB_HANCHES: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Lubrifier les hanches et le bas du dos.',
     muscles: ['fléchisseurs de hanche', 'fessiers', 'bas du dos'],
+    mouvement: 'rotation_hanche',
+    variante: 'facile',
+    musclesPrincipaux: ['Fléchisseurs de hanche', 'Fessiers'],
+    musclesSecondaires: ['Lombaires'],
     miseEnPlace: 'Debout, pieds à largeur d’épaules, mains sur les hanches.',
     execution: [
       'Dessine de grands cercles avec le bassin.',
@@ -261,6 +293,10 @@ export const EXERCICES_MOB_HANCHES: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Ouvrir l’avant de la hanche, raccourci par la position assise.',
     muscles: ['psoas', 'droit fémoral', 'fessiers'],
+    mouvement: 'ouverture_hanche',
+    variante: 'facile',
+    musclesPrincipaux: ['Fléchisseurs de hanche', 'Quadriceps'],
+    musclesSecondaires: ['Fessiers'],
     miseEnPlace: 'Un genou au sol sur le tapis, l’autre pied devant, genou à 90 degrés.',
     execution: [
       'Serre le fessier de la jambe arrière.',
@@ -288,6 +324,10 @@ export const EXERCICES_MOB_HANCHES: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Travailler la rotation interne et externe des hanches.',
     muscles: ['rotateurs de hanche', 'fessiers', 'adducteurs'],
+    mouvement: 'rotation_hanche',
+    variante: 'moyen',
+    musclesPrincipaux: ['Rotateurs de hanche', 'Fessiers'],
+    musclesSecondaires: ['Adducteurs'],
     miseEnPlace: 'Assis au sol, une jambe pliée devant à 90 degrés, l’autre pliée sur le côté à 90 degrés.',
     execution: [
       'Redresse le buste.',
@@ -313,6 +353,10 @@ export const EXERCICES_MOB_HANCHES: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Retrouver la position accroupie complète, talons au sol.',
     muscles: ['adducteurs', 'fessiers', 'chevilles'],
+    mouvement: 'ouverture_hanche',
+    variante: 'difficile',
+    musclesPrincipaux: ['Adducteurs', 'Fessiers'],
+    musclesSecondaires: ['Mollets'],
     miseEnPlace: 'Pieds un peu plus larges que les épaules, pointes ouvertes.',
     execution: [
       'Descends le plus bas possible en gardant les talons au sol.',
@@ -340,6 +384,10 @@ export const EXERCICES_MOB_HANCHES: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Étirer en profondeur le fessier et les rotateurs de hanche.',
     muscles: ['grand fessier', 'piriforme', 'rotateurs de hanche'],
+    mouvement: 'rotation_hanche',
+    variante: 'difficile',
+    musclesPrincipaux: ['Fessiers', 'Rotateurs de hanche'],
+    musclesSecondaires: [],
     miseEnPlace: 'À quatre pattes, ramène un genou derrière le poignet du même côté, tibia en diagonale. Tends l’autre jambe derrière.',
     execution: [
       'Garde le bassin bien de face.',
@@ -367,6 +415,10 @@ export const EXERCICES_MOB_HANCHES: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Assouplir les adducteurs, l’intérieur des cuisses.',
     muscles: ['adducteurs'],
+    mouvement: 'ouverture_hanche',
+    variante: 'moyen',
+    musclesPrincipaux: ['Adducteurs'],
+    musclesSecondaires: [],
     miseEnPlace: 'À quatre pattes sur le tapis, écarte les genoux largement, pieds dans l’axe des genoux.',
     execution: [
       'Descends sur les avant-bras.',
@@ -396,6 +448,8 @@ export const EXERCICES_MOB_THORACIQUE: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Mobiliser toute la colonne en douceur.',
     muscles: ['érecteurs du rachis', 'abdominaux'],
+    musclesPrincipaux: ['Lombaires', 'Haut du dos'],
+    musclesSecondaires: ['Abdominaux'],
     miseEnPlace: 'À quatre pattes, mains sous les épaules, genoux sous les hanches.',
     execution: [
       'Arrondis le dos vers le plafond en rentrant le menton.',
@@ -421,6 +475,10 @@ export const EXERCICES_MOB_THORACIQUE: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Faire tourner le haut du dos, qui s’enraidit et surcharge les épaules.',
     muscles: ['rotateurs du tronc', 'pectoraux', 'obliques'],
+    mouvement: 'rotation_thoracique',
+    variante: 'facile',
+    musclesPrincipaux: ['Haut du dos', 'Obliques'],
+    musclesSecondaires: ['Pectoraux'],
     miseEnPlace: 'Allongé sur le côté, genoux pliés à 90 degrés, bras tendus devant toi l’un sur l’autre.',
     execution: [
       'Ouvre le bras du dessus en arc vers l’arrière, regard qui suit la main.',
@@ -449,6 +507,10 @@ export const EXERCICES_MOB_THORACIQUE: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Tourner le haut du dos en gardant le bassin fixe.',
     muscles: ['rotateurs du tronc', 'rhomboïdes'],
+    mouvement: 'rotation_thoracique',
+    variante: 'moyen',
+    musclesPrincipaux: ['Haut du dos', 'Obliques'],
+    musclesSecondaires: ['Rhomboïdes'],
     miseEnPlace: 'À quatre pattes, une main derrière la tête.',
     execution: [
       'Amène le coude vers le bras d’appui.',
@@ -476,6 +538,8 @@ export const EXERCICES_MOB_THORACIQUE: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Redresser le haut du dos voûté pour libérer les épaules.',
     muscles: ['érecteurs du rachis thoracique', 'pectoraux'],
+    musclesPrincipaux: ['Haut du dos'],
+    musclesSecondaires: ['Pectoraux'],
     miseEnPlace: 'Serviette bien roulée sous le haut du dos, à hauteur des omoplates. Mains derrière la tête, coudes rapprochés, fesses au sol.',
     execution: [
       'Laisse le haut du dos s’étendre doucement par-dessus la serviette.',
@@ -502,6 +566,10 @@ export const EXERCICES_MOB_THORACIQUE: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Combiner ouverture de hanche et rotation du haut du dos.',
     muscles: ['rotateurs du tronc', 'fléchisseurs de hanche', 'adducteurs'],
+    mouvement: 'rotation_thoracique',
+    variante: 'difficile',
+    musclesPrincipaux: ['Haut du dos', 'Obliques'],
+    musclesSecondaires: ['Fléchisseurs de hanche', 'Adducteurs'],
     miseEnPlace: 'Grande fente avant, mains au sol à l’intérieur du pied avant.',
     execution: [
       'Garde une main au sol.',
@@ -532,6 +600,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Monter doucement la température du corps.',
     muscles: ['jambes', 'cœur'],
+    musclesPrincipaux: ['Cœur'],
+    musclesSecondaires: ['Mollets', 'Quadriceps'],
     miseEnPlace: 'Debout, espace dégagé.',
     execution: [
       'Marche sur place d’un bon rythme.',
@@ -557,6 +627,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Réveiller chaque articulation, de la tête aux chevilles.',
     muscles: ['toutes les articulations'],
+    musclesPrincipaux: ['Coiffe des rotateurs', 'Rotateurs de hanche'],
+    musclesSecondaires: ['Avant-bras', 'Mollets'],
     miseEnPlace: 'Debout, pieds à largeur de hanches.',
     execution: [
       'Fais 5 rotations lentes de la nuque, sans aller loin en arrière.',
@@ -582,6 +654,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Faire monter le cœur et activer les fléchisseurs de hanche.',
     muscles: ['fléchisseurs de hanche', 'mollets', 'cœur'],
+    musclesPrincipaux: ['Fléchisseurs de hanche', 'Cœur'],
+    musclesSecondaires: ['Mollets'],
     miseEnPlace: 'Debout, bras fléchis.',
     execution: [
       'Monte un genou à hauteur de hanche, puis l’autre.',
@@ -607,6 +681,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Chauffer les ischios et les quadriceps avant la course.',
     muscles: ['ischio-jambiers', 'quadriceps'],
+    musclesPrincipaux: ['Quadriceps', 'Ischio-jambiers'],
+    musclesSecondaires: ['Cœur'],
     miseEnPlace: 'Debout, bras fléchis.',
     execution: [
       'Ramène un talon vers les fesses, puis l’autre.',
@@ -632,6 +708,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Mobiliser les hanches de façon dynamique.',
     muscles: ['ischio-jambiers', 'fléchisseurs de hanche', 'adducteurs'],
+    musclesPrincipaux: ['Ischio-jambiers', 'Fléchisseurs de hanche'],
+    musclesSecondaires: ['Adducteurs'],
     miseEnPlace: 'Debout de profil à un mur, une main en appui.',
     execution: [
       'Balance une jambe d’avant en arrière, souplement.',
@@ -659,6 +737,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Réveiller les appuis latéraux et le cardio.',
     muscles: ['adducteurs', 'moyens fessiers', 'mollets', 'cœur'],
+    musclesPrincipaux: ['Adducteurs', 'Moyen fessier'],
+    musclesSecondaires: ['Mollets', 'Cœur'],
     miseEnPlace: 'Debout, genoux légèrement fléchis.',
     execution: [
       'Déplace-toi sur le côté en rapprochant puis écartant les pieds, sans les croiser.',
@@ -684,6 +764,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Échauffer en même temps les ischios, le gainage et les épaules.',
     muscles: ['ischio-jambiers', 'abdominaux', 'épaules'],
+    musclesPrincipaux: ['Ischio-jambiers', 'Abdominaux'],
+    musclesSecondaires: ['Deltoïdes antérieurs', 'Mollets'],
     miseEnPlace: 'Debout, pieds à largeur de hanches.',
     execution: [
       'Penche-toi et pose les mains au sol, genoux un peu fléchis si besoin.',
@@ -711,6 +793,8 @@ export const EXERCICES_ECHAUFFEMENT: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Préparer les jambes et le haut du dos en un seul mouvement.',
     muscles: ['quadriceps', 'fessiers', 'rotateurs du tronc'],
+    musclesPrincipaux: ['Quadriceps', 'Fessiers'],
+    musclesSecondaires: ['Obliques', 'Fléchisseurs de hanche'],
     miseEnPlace: 'Debout, mains jointes devant la poitrine.',
     execution: [
       'Fais une fente avant.',
@@ -741,6 +825,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Laisser redescendre le cœur progressivement après l’effort.',
     muscles: ['jambes', 'cœur'],
+    musclesPrincipaux: ['Cœur'],
+    musclesSecondaires: ['Mollets'],
     miseEnPlace: 'Juste après la séance ou la course.',
     execution: [
       'Marche tranquillement.',
@@ -766,6 +852,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Calmer le système nerveux et faciliter la récupération.',
     muscles: ['diaphragme'],
+    musclesPrincipaux: ['Diaphragme'],
+    musclesSecondaires: ['Abdominaux'],
     miseEnPlace: 'Allongé sur le dos, genoux pliés, une main sur le ventre, une sur la poitrine.',
     execution: [
       'Inspire par le nez en gonflant le ventre, la poitrine bouge peu.',
@@ -791,6 +879,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Relâcher le dos et les hanches en fin de séance.',
     muscles: ['dorsaux', 'bas du dos', 'fessiers'],
+    musclesPrincipaux: ['Lombaires', 'Grand dorsal'],
+    musclesSecondaires: ['Fessiers'],
     miseEnPlace: 'À genoux, fesses sur les talons.',
     execution: [
       'Penche le buste vers l’avant, front au sol ou sur les poings.',
@@ -816,6 +906,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Relâcher l’arrière des cuisses après la course ou les charnières.',
     muscles: ['ischio-jambiers', 'mollets'],
+    musclesPrincipaux: ['Ischio-jambiers'],
+    musclesSecondaires: ['Mollets'],
     miseEnPlace: 'Allongé sur le dos, une jambe tendue au sol. Serviette passée sous le pied de l’autre jambe.',
     execution: [
       'Monte la jambe tendue avec la serviette jusqu’à sentir l’étirement.',
@@ -842,6 +934,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Relâcher l’avant des cuisses.',
     muscles: ['quadriceps', 'fléchisseurs de hanche'],
+    musclesPrincipaux: ['Quadriceps'],
+    musclesSecondaires: ['Fléchisseurs de hanche'],
     miseEnPlace: 'Debout, une main sur un mur ou une table.',
     execution: [
       'Attrape une cheville et ramène le talon vers la fesse.',
@@ -868,6 +962,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['poids_du_corps'],
     objectif: 'Relâcher les mollets, très sollicités en course.',
     muscles: ['gastrocnémiens', 'soléaire'],
+    musclesPrincipaux: ['Mollets'],
+    musclesSecondaires: [],
     miseEnPlace: 'Face à un mur, mains dessus, une jambe tendue en arrière, talon au sol.',
     execution: [
       'Avance le bassin vers le mur, talon arrière bien au sol.',
@@ -895,6 +991,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Relâcher les fessiers et les rotateurs de hanche, version douce du pigeon.',
     muscles: ['grand fessier', 'piriforme'],
+    musclesPrincipaux: ['Fessiers'],
+    musclesSecondaires: ['Rotateurs de hanche'],
     miseEnPlace: 'Sur le dos, genoux pliés. Pose une cheville sur le genou opposé.',
     execution: [
       'Attrape l’arrière de la cuisse d’appui.',
@@ -921,6 +1019,8 @@ export const EXERCICES_RETOUR_CALME: Exercice[] = [
     materiel: ['tapis'],
     objectif: 'Relâcher toute la chaîne arrière en fin de séance.',
     muscles: ['ischio-jambiers', 'mollets', 'bas du dos'],
+    musclesPrincipaux: ['Ischio-jambiers'],
+    musclesSecondaires: ['Mollets', 'Lombaires'],
     miseEnPlace: 'Assis, jambes tendues devant toi.',
     execution: [
       'Grandis-toi, puis penche-toi depuis les hanches vers les pieds.',

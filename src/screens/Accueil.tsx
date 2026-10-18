@@ -67,19 +67,19 @@ export function Accueil({ profil }: { profil: Profil }) {
     <div className="space-y-4">
       <header className="flex items-end justify-between pt-2">
         <div>
-          <p className="text-sm uppercase tracking-wider text-lime-300">
+          <p className="text-sm uppercase tracking-wider text-sauge-clair">
             {semaine === 0 ? 'Démarrage lundi' : `Semaine ${Math.min(semaine, 12)} sur 12 · ${NOMS_PHASES[phase]}`}
           </p>
           <h1 className="text-3xl font-bold">Aujourd’hui</h1>
         </div>
         <div className="text-right">
           <p className="text-3xl font-bold tabular-nums">{serie}</p>
-          <p className="text-xs text-zinc-400">séances d’affilée</p>
+          <p className="text-xs text-ivoire2">séances d’affilée</p>
         </div>
       </header>
 
       {coach && (
-        <Carte className="border border-sky-400/30">
+        <Carte className="border border-sauge/40">
           <Titre>Le mot du coach</Titre>
           <p className="text-lg leading-relaxed">{coach.message}</p>
         </Carte>
@@ -90,9 +90,9 @@ export function Accueil({ profil }: { profil: Profil }) {
       )}
 
       {test != null && (
-        <Carte className="border border-lime-400/40">
+        <Carte className="border border-dore/40">
           <Titre>Test de la semaine {test}</Titre>
-          <p className="mb-4 text-zinc-300">
+          <p className="mb-4 text-ivoire/85">
             {test === 0 ? 'Point de départ : pompes max et 2 km. Tu sauras d’où tu pars.' : 'Pompes max, course, énergie et poids : on compare avec le dernier test.'}
           </p>
           <Bouton className="w-full" onClick={() => nav(`/tests?semaine=${test}`)}>
@@ -106,7 +106,7 @@ export function Accueil({ profil }: { profil: Profil }) {
           <Titre>Séance du jour</Titre>
           <p className="text-xl font-semibold">Faite. Bien joué.</p>
           {prochaine && (
-            <p className="mt-2 text-zinc-400">
+            <p className="mt-2 text-ivoire2">
               Prochaine : {NOMS_SEANCES[prochaine.type]}, {jourLisible(prochaine.date, auj)}.
             </p>
           )}
@@ -118,8 +118,8 @@ export function Accueil({ profil }: { profil: Profil }) {
             <Pastille ton={apercu.allegee ? 'alerte' : 'neutre'}>{apercu.plan.dureeEstimeeMin} min</Pastille>
           </div>
           <p className="text-2xl font-bold">{NOMS_SEANCES[typePropose]}</p>
-          <p className="text-zinc-300">{apercu.raison}</p>
-          {!checkFait && <p className="text-sm text-amber-300">Fais le check du matin : la séance s’adapte à ta forme.</p>}
+          <p className="text-ivoire/85">{apercu.raison}</p>
+          {!checkFait && <p className="text-sm text-alerte">Fais le check du matin : la séance s’adapte à ta forme.</p>}
           <Bouton className="w-full" onClick={() => nav(`/seance/${typePropose}`)}>
             Commencer
           </Bouton>
@@ -145,7 +145,7 @@ export function Accueil({ profil }: { profil: Profil }) {
       {derniereVictoire && (
         <Carte>
           <Titre>Dernière victoire</Titre>
-          <p className="text-lg font-semibold text-lime-300">{derniereVictoire.texte}</p>
+          <p className="text-lg font-semibold text-sauge-clair">{derniereVictoire.texte}</p>
         </Carte>
       )}
 
@@ -153,9 +153,9 @@ export function Accueil({ profil }: { profil: Profil }) {
         <Titre>Cette semaine</Titre>
         <p className="text-lg">
           {bilan.faites} séance{bilan.faites > 1 ? 's' : ''}{bilan.prevues > 0 ? ` sur ${bilan.prevues}` : ''}
-          {bilan.joints != null && <span className="text-zinc-400"> · {bilan.joints} joints/jour</span>}
+          {bilan.joints != null && <span className="text-ivoire2"> · {bilan.joints} joints/jour</span>}
         </p>
-        <Link to="/progres" className="mt-2 inline-block text-lime-300 underline underline-offset-4">
+        <Link to="/progres" className="mt-2 inline-block text-sauge-clair underline underline-offset-4">
           Voir le bilan et les courbes
         </Link>
       </Carte>

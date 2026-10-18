@@ -54,6 +54,19 @@ export interface Exercice {
   fourchette?: [number, number] // reps (ou secondes si mesure = duree) par série, phase 1
   alternatives?: string[] // ids d'exercices plus sûrs / plus faciles de la même famille
   svg: string // schéma : contenu SVG complet (<svg viewBox=...>...</svg>), traits en currentColor
+  // Rangement « coach » : un mouvement regroupe 3 variantes (facile, moyen, difficile).
+  mouvement?: string // id du mouvement, ex. 'pompe'
+  variante?: 'facile' | 'moyen' | 'difficile'
+  musclesPrincipaux?: string[]
+  musclesSecondaires?: string[]
+}
+
+export interface Mouvement {
+  id: string
+  nom: string // ex. « Pompe »
+  famille: Famille
+  description: string // une phrase : ce que travaille le mouvement
+  variantes: { facile: string; moyen: string; difficile: string } // ids d'exercices
 }
 
 // ---------- Base locale ----------
@@ -115,6 +128,7 @@ export interface EtatExercice {
   douleur: boolean // douleur signalée à la dernière séance
   derniereFois?: string
   dernierChangement?: string // ex. « Swing : passage à 16 kg », affiché dans la raison de la séance suivante
+  maitrise?: boolean // variante maîtrisée : la séance suivante propose la variante plus difficile du mouvement
 }
 
 export interface JournalJour {

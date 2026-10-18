@@ -40,28 +40,28 @@ export function CheckMatin({ date, existant, veille, onFini }: { date: string; e
     <Carte className="space-y-6">
       <div>
         <h2 className="text-xl font-bold">Check du matin</h2>
-        <p className="text-sm text-zinc-400">30 secondes. C’est ce qui règle la séance du jour.</p>
+        <p className="text-sm text-ivoire2">30 secondes. C’est ce qui règle la séance du jour.</p>
       </div>
       <Echelle label="Énergie au réveil" valeur={energie} onChange={setEnergie} />
       <Echelle label="Qualité du sommeil" valeur={sommeil} onChange={setSommeil} />
       <Compteur label="Heures de sommeil" valeur={heures} onChange={setHeures} pas={0.5} min={0} max={14} suffixe=" h" />
-      <div className="space-y-4 border-t border-zinc-800 pt-5">
+      <div className="space-y-4 border-t border-ligne pt-5">
         <p className="font-semibold">Hier</p>
         <Compteur label="Joints" valeur={joints} onChange={setJoints} min={0} max={20} />
         {joints > 0 && (
           <>
             <Choix options={MODES} valeur={mode} onChange={setMode} />
-            <label className="flex items-center justify-between text-zinc-300">
+            <label className="flex items-center justify-between text-ivoire/85">
               Heure du dernier
               <input
                 type="time"
                 value={heureDernier}
                 onChange={(e) => setHeureDernier(e.target.value)}
-                className="h-12 rounded-xl bg-zinc-800 px-3 text-lg text-zinc-100"
+                className="h-12 rounded-xl bg-carte2 px-3 text-lg text-ivoire"
               />
             </label>
             <div className="space-y-2">
-              <p className="text-zinc-300">Un joint avant midi ?</p>
+              <p className="text-ivoire/85">Un joint avant midi ?</p>
               <Choix
                 options={[{ valeur: 'non', label: 'Non' }, { valeur: 'oui', label: 'Oui' }]}
                 valeur={jointMatin == null ? undefined : jointMatin ? 'oui' : 'non'}

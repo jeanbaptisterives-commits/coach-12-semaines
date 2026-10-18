@@ -93,6 +93,10 @@ export function appliquerProgression(
       base.series = etat.series + 1
       base.repsCible = etat.basReps
       base.dernierChangement = `${ex.nom} : une série de plus`
+    } else if (ex.mouvement && ex.variante !== 'difficile') {
+      // Haut de fourchette, séries au maximum, plus de charge possible : la variante est maîtrisée.
+      base.maitrise = true
+      base.dernierChangement = `${ex.nom} maîtrisé : on passe à la variante plus difficile`
     } else {
       const decal = ex.mesure === 'duree' ? 10 : 2
       base.basReps = etat.basReps + decal

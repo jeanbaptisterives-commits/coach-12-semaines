@@ -142,6 +142,27 @@ function choisir(ctx: ContexteGeneration, emp: Emplacement, dejaPris: Set<string
   return ex ? { ex } : undefined
 }
 
+const SUIVANTE = { facile: 'moyen', moyen: 'difficile' } as const
+
+// Variante maîtrisée : on monte d'un niveau dans le même mouvement (si la variante est autorisée).
+export function varianteSuperieure(ctx: ContexteGeneration, ex: Exercice): Exercice | undefined {
+  if (!ex.mouvement || !ex.variante || ex.variante === 'difficile') return undefined
+  const cible = SUIVANTE[ex.variante]
+  return ctx.lib.find((e) => e.mouvement === ex.mouvement && e.variante === cible && estAutorise(e, ctx.profil) && e.intensite !== 'haute' && !ctx.etats[e.id]?.douleur)
+}
+
+function monteeDeNiveau(ctx: ContexteGeneration, c: Choix | undefined, dejaPris: Set<string>): Choix | undefined {
+  if (!c || !ctx.etats[c.ex.id]?.maitrise) return c
+  let ex = c.ex
+  // Plusieurs niveaux peuvent avoir été maîtrisés : on monte tant que c'est le cas.
+  for (let i = 0; i < 2 && ctx.etats[ex.id]?.maitrise; i++) {
+    const sup = varianteSuperieure(ctx, ex)
+    if (!sup || dejaPris.has(sup.id)) break
+    ex = sup
+  }
+  return ex === c.ex ? c : { ex, remplace: c.remplace }
+}
+
 // Consigne du coach : remplacer un exercice par un autre, seulement si le remplaçant est autorisé.
 function remplacementCoach(ctx: ContexteGeneration, c: Choix | undefined, dejaPris: Set<string>): Choix | undefined {
   if (!c) return c
@@ -199,14 +220,18 @@ export function genererSeance(ctx: ContexteGeneration): SeancePlanifiee {
   const tour = (ctx.numeroSeance ?? ctx.semaine * 3) % 7
   const dejaPris = new Set<string>()
   const remplacements: string[] = []
+  const montees: string[] = []
   const principal: PrescriptionExercice[] = []
   let course: EtatCourse | undefined
   const raisons: string[] = []
 
   const ajouter = (emps: Emplacement[], repos: number) => {
     emps.forEach((emp, i) => {
-      const c = remplacementCoach(ctx, choisir(ctx, emp, dejaPris, i), dejaPris)
+      const base = choisir(ctx, emp, dejaPris, i)
+      const monte = monteeDeNiveau(ctx, base, dejaPris)
+      const c = remplacementCoach(ctx, monte, dejaPris)
       if (!c) return
+      if (base && monte && monte.ex.id !== base.ex.id && c.ex.id === monte.ex.id) montees.push(`${base.ex.nom} maîtrisé : passage à ${monte.ex.nom}`)
       dejaPris.add(c.ex.id)
       if (c.remplace) remplacements.push(`${c.remplace.nom} remplacé par ${c.ex.nom} après la douleur signalée`)
       principal.push(prescrire(ctx, c.ex, seriesDefaut, repos))
@@ -255,7 +280,7 @@ export function genererSeance(ctx: ContexteGeneration): SeancePlanifiee {
   if (ctx.forme.bas) raisons.unshift(`Forme basse ce matin (${ctx.forme.detail}) : séance allégée d'environ 20 %`)
   if (consigne && (consigne.alleger || consigne.durcir || consigne.remplacer?.length))
     raisons.unshift(`Coach : ${ctx.coach?.raison ?? (consigne.alleger ? 'séance allégée' : consigne.durcir ? 'une série de plus' : 'exercice changé')}`)
-  raisons.push(...remplacements)
+  raisons.push(...montees, ...remplacements)
   if (raisons.length < 2) {
     const changements = principal
       .map((p) => ctx.etats[p.exerciceId]?.dernierChangement)

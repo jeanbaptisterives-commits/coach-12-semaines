@@ -1,0 +1,26 @@
+// Exercices qui ont une animation Remotion (public/animations/<id>.mp4).
+// Fichier régénéré par scripts/copier-animations.sh : ne pas éditer à la main.
+export const ANIMATIONS = new Set<string>([
+  'chenille',
+  'fente_arriere',
+  'fente_basse_flechisseurs',
+  'fente_statique',
+  'good_morning_poids_corps',
+  'kb_farmer_walk',
+  'kb_goblet_squat',
+  'kb_rack_carry',
+  'kb_rowing_un_bras',
+  'kb_suitcase_carry',
+  'kb_swing',
+  'planche',
+  'pompes_inclinees',
+  'pompes_murales',
+  'pompes_tempo',
+  'pompes',
+  'pont_fessier_unijambe',
+  'pont_fessier',
+  'posture_enfant',
+  'step_up',
+  'tirage_inverse_table',
+  'tirage_serviette_isometrique',
+])

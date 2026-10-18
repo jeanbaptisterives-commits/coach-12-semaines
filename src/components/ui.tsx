@@ -18,10 +18,10 @@ export function Bouton({
   type?: 'button' | 'submit'
 }) {
   const styles = {
-    principal: 'bg-lime-400 text-zinc-950 active:bg-lime-300',
-    secondaire: 'bg-zinc-800 text-zinc-100 active:bg-zinc-700',
-    danger: 'bg-red-500/90 text-white active:bg-red-400',
-    fantome: 'bg-transparent text-zinc-300 underline underline-offset-4',
+    principal: 'bg-dore text-fond active:bg-dore-clair',
+    secondaire: 'bg-carte2 text-ivoire active:bg-ligne',
+    danger: 'bg-douleur text-white active:bg-douleur/80',
+    fantome: 'bg-transparent text-ivoire/85 underline underline-offset-4',
   }[variante]
   return (
     <button
@@ -36,15 +36,15 @@ export function Bouton({
 }
 
 export function Carte({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-3xl bg-zinc-900 p-5 ${className}`}>{children}</section>
+  return <section className={`rounded-3xl bg-carte p-5 ${className}`}>{children}</section>
 }
 
 export function Titre({ children }: { children: ReactNode }) {
-  return <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-400">{children}</h2>
+  return <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ivoire2">{children}</h2>
 }
 
 export function Pastille({ children, ton = 'neutre' }: { children: ReactNode; ton?: 'neutre' | 'ok' | 'alerte' }) {
-  const c = { neutre: 'bg-zinc-800 text-zinc-300', ok: 'bg-lime-400/15 text-lime-300', alerte: 'bg-amber-400/15 text-amber-300' }[ton]
+  const c = { neutre: 'bg-carte2 text-ivoire/85', ok: 'bg-sauge/20 text-sauge-clair', alerte: 'bg-alerte/15 text-alerte' }[ton]
   return <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${c}`}>{children}</span>
 }
 
@@ -68,16 +68,16 @@ export function Compteur({
   const fixer = (v: number) => onChange(Math.min(max, Math.max(min, Math.round(v * 100) / 100)))
   return (
     <div className="flex items-center justify-between gap-3">
-      {label && <span className="text-zinc-300">{label}</span>}
+      {label && <span className="text-ivoire/85">{label}</span>}
       <div className="flex items-center gap-3">
-        <button type="button" aria-label="moins" onClick={() => fixer(valeur - pas)} className="size-14 rounded-2xl bg-zinc-800 text-3xl active:bg-zinc-700">
+        <button type="button" aria-label="moins" onClick={() => fixer(valeur - pas)} className="size-14 rounded-2xl bg-carte2 text-3xl active:bg-ligne">
           −
         </button>
         <span className="min-w-20 text-center text-3xl font-bold tabular-nums">
           {valeur}
-          {suffixe && <span className="text-lg text-zinc-400">{suffixe}</span>}
+          {suffixe && <span className="text-lg text-ivoire2">{suffixe}</span>}
         </span>
-        <button type="button" aria-label="plus" onClick={() => fixer(valeur + pas)} className="size-14 rounded-2xl bg-zinc-800 text-3xl active:bg-zinc-700">
+        <button type="button" aria-label="plus" onClick={() => fixer(valeur + pas)} className="size-14 rounded-2xl bg-carte2 text-3xl active:bg-ligne">
           +
         </button>
       </div>
@@ -105,8 +105,8 @@ export function Echelle({
   return (
     <div>
       <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-zinc-300">{label}</span>
-        {valeur != null && aide && <span className="text-sm text-zinc-400">{aide(valeur)}</span>}
+        <span className="text-ivoire/85">{label}</span>
+        {valeur != null && aide && <span className="text-sm text-ivoire2">{aide(valeur)}</span>}
       </div>
       <div className="grid grid-cols-5 gap-2">
         {valeurs.map((v) => (
@@ -114,7 +114,7 @@ export function Echelle({
             key={v}
             type="button"
             onClick={() => onChange(v)}
-            className={`h-12 rounded-xl text-lg font-semibold tabular-nums ${valeur === v ? 'bg-lime-400 text-zinc-950' : 'bg-zinc-800 text-zinc-200 active:bg-zinc-700'}`}
+            className={`h-12 rounded-xl text-lg font-semibold tabular-nums ${valeur === v ? 'bg-dore text-fond' : 'bg-carte2 text-ivoire active:bg-ligne'}`}
           >
             {v}
           </button>
@@ -140,7 +140,7 @@ export function Choix<T extends string | number>({
           key={String(o.valeur)}
           type="button"
           onClick={() => onChange(o.valeur)}
-          className={`min-h-12 rounded-xl px-4 font-medium ${valeur === o.valeur ? 'bg-lime-400 text-zinc-950' : 'bg-zinc-800 text-zinc-200 active:bg-zinc-700'}`}
+          className={`min-h-12 rounded-xl px-4 font-medium ${valeur === o.valeur ? 'bg-dore text-fond' : 'bg-carte2 text-ivoire active:bg-ligne'}`}
         >
           {o.label}
         </button>

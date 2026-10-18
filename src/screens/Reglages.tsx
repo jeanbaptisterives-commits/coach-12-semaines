@@ -41,7 +41,7 @@ export function Reglages({ profil }: { profil: Profil }) {
 
       <Carte className="space-y-4">
         <Titre>Feu vert médical</Titre>
-        <p className="text-zinc-300">
+        <p className="text-ivoire/85">
           Le fractionné, les sauts et le travail à haute intensité restent verrouillés tant que tu n’as pas fait un ECG et un bilan sanguin.
         </p>
         <label className="flex min-h-14 items-center gap-4">
@@ -52,7 +52,7 @@ export function Reglages({ profil }: { profil: Profil }) {
               if (e.target.checked && !confirm('Tu confirmes avoir fait l’ECG et le bilan sanguin, et que ton médecin est d’accord ?')) return
               maj({ feuVertMedical: e.target.checked })
             }}
-            className="size-7 accent-lime-400"
+            className="size-7 accent-[#c4a35a]"
           />
           <span className="text-lg">ECG et bilan sanguin faits, feu vert</span>
         </label>
@@ -66,13 +66,13 @@ export function Reglages({ profil }: { profil: Profil }) {
               key={j.valeur}
               type="button"
               onClick={() => maj({ jours: basculer<Jour>(profil.jours, j.valeur) })}
-              className={`h-14 rounded-xl text-sm font-semibold ${profil.jours.includes(j.valeur) ? 'bg-lime-400 text-zinc-950' : 'bg-zinc-800'}`}
+              className={`h-14 rounded-xl text-sm font-semibold ${profil.jours.includes(j.valeur) ? 'bg-dore text-fond' : 'bg-carte2'}`}
             >
               {j.label}
             </button>
           ))}
         </div>
-        <p className="text-sm text-zinc-400">Dans l’ordre de la semaine : force, puis cardio, puis circuit et mobilité.</p>
+        <p className="text-sm text-ivoire2">Dans l’ordre de la semaine : force, puis cardio, puis circuit et mobilité.</p>
       </Carte>
 
       <Carte className="space-y-3">
@@ -83,13 +83,13 @@ export function Reglages({ profil }: { profil: Profil }) {
               key={k}
               type="button"
               onClick={() => maj({ kettlebells: basculer(profil.kettlebells, k).sort((a, b) => a - b) })}
-              className={`h-12 rounded-xl font-semibold ${profil.kettlebells.includes(k) ? 'bg-lime-400 text-zinc-950' : 'bg-zinc-800'}`}
+              className={`h-12 rounded-xl font-semibold ${profil.kettlebells.includes(k) ? 'bg-dore text-fond' : 'bg-carte2'}`}
             >
               {k} kg
             </button>
           ))}
         </div>
-        <p className="pt-2 text-zinc-300">Barre de traction</p>
+        <p className="pt-2 text-ivoire/85">Barre de traction</p>
         <Choix
           options={[{ valeur: 'non', label: 'Non' }, { valeur: 'oui', label: 'Oui' }]}
           valeur={profil.barreTraction ? 'oui' : 'non'}
@@ -115,7 +115,7 @@ export function Reglages({ profil }: { profil: Profil }) {
 
       <Carte className="space-y-3">
         <Titre>Sauvegarde</Titre>
-        <p className="text-zinc-300">Tes données ne quittent jamais ton téléphone. Exporte une sauvegarde de temps en temps.</p>
+        <p className="text-ivoire/85">Tes données ne quittent jamais ton téléphone. Exporte une sauvegarde de temps en temps.</p>
         <Bouton className="w-full" onClick={telecharger}>
           Exporter mes données (JSON)
         </Bouton>
@@ -123,10 +123,10 @@ export function Reglages({ profil }: { profil: Profil }) {
           Importer une sauvegarde
         </Bouton>
         <input ref={fichier} type="file" accept="application/json,.json" hidden onChange={(e) => e.target.files?.[0] && restaurer(e.target.files[0])} />
-        {message && <p className="text-lime-300">{message}</p>}
+        {message && <p className="text-sauge-clair">{message}</p>}
       </Carte>
 
-      <p className="px-2 text-center text-xs text-zinc-600">Début du programme : semaine du {profil.dateDebut.split('-').reverse().join('/')}</p>
+      <p className="px-2 text-center text-xs text-ivoire3">Début du programme : semaine du {profil.dateDebut.split('-').reverse().join('/')}</p>
     </div>
   )
 }

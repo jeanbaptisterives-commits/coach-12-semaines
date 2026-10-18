@@ -6,7 +6,8 @@ import { libelleBloc } from '../engine/course'
 import { construireEtapes, segmentsCourse, type Etape } from '../engine/etapes'
 import type { Profil, Seance as TSeance, SerieRealisee, TypeSeance } from '../types'
 import { Fiche, Modale } from '../components/Fiche'
-import { bip, Bouton, Carte, Echelle, fmtDuree, Pastille, Svg, Titre, useCompteARebours, vibrer, Compteur } from '../components/ui'
+import { Animation } from '../components/Animation'
+import { bip, Bouton, Carte, Echelle, fmtDuree, Pastille, Titre, useCompteARebours, vibrer, Compteur } from '../components/ui'
 import { NOMS_SEANCES } from './Accueil'
 
 const CLE_BROUILLON = 'seance-en-cours'
@@ -80,7 +81,7 @@ export function Seance({ profil }: { profil: Profil }) {
     }
   }, [seance, pas, debut, fin])
 
-  if (!seance) return <p className="pt-10 text-center text-zinc-400">Préparation de la séance…</p>
+  if (!seance) return <p className="pt-10 text-center text-ivoire2">Préparation de la séance…</p>
 
   async function terminer(s: TSeance) {
     const msgs = await terminerSeance({ ...s, dureeSec: Math.round((Date.now() - debut) / 1000) })
@@ -111,14 +112,14 @@ export function Seance({ profil }: { profil: Profil }) {
               <Titre>Pour la prochaine fois</Titre>
               <ul className="space-y-1.5">
                 {fin.map((m) => (
-                  <li key={m} className="text-lime-300">
+                  <li key={m} className="text-sauge-clair">
                     {m}
                   </li>
                 ))}
               </ul>
             </>
           ) : (
-            <p className="text-zinc-400">{seance.allegee ? 'Séance allégée : les cibles restent les mêmes.' : 'Mêmes cibles la prochaine fois.'}</p>
+            <p className="text-ivoire2">{seance.allegee ? 'Séance allégée : les cibles restent les mêmes.' : 'Mêmes cibles la prochaine fois.'}</p>
           )}
         </Carte>
         <Bouton className="w-full" onClick={() => nav('/')}>
@@ -135,13 +136,13 @@ export function Seance({ profil }: { profil: Profil }) {
   return (
     <div className="space-y-4 pt-1">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-zinc-400">
+        <span className="text-sm text-ivoire2">
           Étape {pas + 1} / {etapes.length}
         </span>
-        <span className="font-mono text-lg tabular-nums text-zinc-300">{chrono}</span>
+        <span className="font-mono text-lg tabular-nums text-ivoire/85">{chrono}</span>
       </div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
-        <div className="h-full bg-lime-400 transition-all" style={{ width: `${(pas / etapes.length) * 100}%` }} />
+      <div className="h-1.5 overflow-hidden rounded-full bg-carte2">
+        <div className="h-full bg-dore transition-all" style={{ width: `${(pas / etapes.length) * 100}%` }} />
       </div>
       {etape.genre === 'course' ? (
         <EtapeCourse key="course" seance={seance} onFini={(c) => avancer({ ...seance, course: c })} />
@@ -194,7 +195,7 @@ function Avant({
     <li key={id + detail}>
       <button type="button" onClick={() => onFiche(id)} className="flex w-full items-center justify-between gap-3 py-2 text-left">
         <span>{parId(id)?.nom ?? id}</span>
-        <span className="shrink-0 text-sm text-zinc-400">{detail}</span>
+        <span className="shrink-0 text-sm text-ivoire2">{detail}</span>
       </button>
     </li>
   )
@@ -206,35 +207,35 @@ function Avant({
   return (
     <div className="space-y-4 pt-2">
       <header>
-        <p className="text-sm uppercase tracking-wider text-lime-300">
+        <p className="text-sm uppercase tracking-wider text-sauge-clair">
           Semaine {seance.semaine} · {p.dureeEstimeeMin} min
         </p>
         <h1 className="text-3xl font-bold">{NOMS_SEANCES[seance.type]}</h1>
       </header>
-      <Carte className={seance.allegee ? 'border border-amber-400/40' : ''}>
+      <Carte className={seance.allegee ? 'border border-alerte/40' : ''}>
         <p className="text-lg">{seance.raison}</p>
       </Carte>
       <Carte>
         <Titre>Échauffement</Titre>
-        <ul className="divide-y divide-zinc-800">{p.echauffement.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
+        <ul className="divide-y divide-ligne">{p.echauffement.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
         {p.course && (
           <>
             <Titre>Course</Titre>
             <p className="pb-2">{libelleBloc(p.course)}</p>
-            <p className="pb-2 text-sm text-zinc-400">En aisance respiratoire : tu dois pouvoir parler. Avec ta chienne, c’est elle qui donne le rythme des pauses.</p>
+            <p className="pb-2 text-sm text-ivoire2">En aisance respiratoire : tu dois pouvoir parler. Avec ta chienne, c’est elle qui donne le rythme des pauses.</p>
           </>
         )}
         {p.principal.length > 0 && (
           <>
             <Titre>{seance.type === 'C' ? 'Circuit et mobilité' : 'Exercices'}</Titre>
-            <ul className="divide-y divide-zinc-800">{p.principal.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
+            <ul className="divide-y divide-ligne">{p.principal.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
           </>
         )}
         <Titre>Retour au calme</Titre>
-        <ul className="divide-y divide-zinc-800">{p.retourCalme.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
+        <ul className="divide-y divide-ligne">{p.retourCalme.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
       </Carte>
-      <label className="flex min-h-16 items-center gap-4 rounded-3xl bg-zinc-900 px-5">
-        <input type="checkbox" checked={seance.zeroJoint} onChange={(e) => onChange({ ...seance, zeroJoint: e.target.checked })} className="size-7 accent-lime-400" />
+      <label className="flex min-h-16 items-center gap-4 rounded-3xl bg-carte px-5">
+        <input type="checkbox" checked={seance.zeroJoint} onChange={(e) => onChange({ ...seance, zeroJoint: e.target.checked })} className="size-7 accent-[#c4a35a]" />
         <span className="text-lg">Zéro joint avant la séance</span>
       </label>
       <Bouton className="w-full" onClick={onDemarrer}>
@@ -303,7 +304,7 @@ function EtapeExercice({
       <Carte className="space-y-6 py-10 text-center">
         <Titre>Repos</Titre>
         <p className="font-mono text-7xl font-bold tabular-nums">{fmtDuree(pause.reste)}</p>
-        {prochain && <p className="text-zinc-400">Ensuite : {prochain.nom}</p>}
+        {prochain && <p className="text-ivoire2">Ensuite : {prochain.nom}</p>}
         <div className="flex gap-3">
           <Bouton variante="secondaire" className="flex-1" onClick={() => pause.demarrer(pause.reste + 15)}>
             +15 s
@@ -326,24 +327,22 @@ function EtapeExercice({
   return (
     <div className="space-y-4">
       <Carte className="space-y-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-sm uppercase tracking-wider text-lime-300">
-              {NOMS_BLOCS[etape.bloc]}
-              {etape.tours ? ` · tour ${etape.tour}/${etape.tours}` : suivie ? ` · série ${etape.serie + 1}/${prevu.series}` : ''}
-            </p>
-            <h2 className="text-2xl font-bold">{ex.nom}</h2>
-          </div>
-          <button type="button" onClick={() => onFiche(ex.id)} className="size-20 shrink-0 rounded-2xl bg-zinc-800 p-2 text-lime-300" aria-label="Voir la fiche">
-            <Svg code={ex.svg} className="h-full w-full" />
-          </button>
+        <div>
+          <p className="text-sm uppercase tracking-wider text-sauge-clair">
+            {NOMS_BLOCS[etape.bloc]}
+            {etape.tours ? ` · tour ${etape.tour}/${etape.tours}` : suivie ? ` · série ${etape.serie + 1}/${prevu.series}` : ''}
+          </p>
+          <h2 className="font-titre text-3xl">{ex.nom}</h2>
         </div>
+        <button type="button" onClick={() => onFiche(ex.id)} className="block w-full" aria-label="Voir la fiche">
+          <Animation ex={ex} />
+        </button>
         <p className="text-3xl font-bold tabular-nums">
           {prevu.reps}
-          <span className="text-lg text-zinc-400">{unite}</span>
-          {prevu.charge != null && <span className="text-zinc-300"> · {prevu.charge} kg</span>}
+          <span className="text-lg text-ivoire2">{unite}</span>
+          {prevu.charge != null && <span className="text-ivoire/85"> · {prevu.charge} kg</span>}
         </p>
-        {prevu.note && <p className="text-zinc-300">{prevu.note}</p>}
+        {prevu.note && <p className="text-ivoire/85">{prevu.note}</p>}
         <Bouton variante="fantome" className="min-h-10! px-0! text-base" onClick={() => onFiche(ex.id)}>
           Voir la fiche
         </Bouton>
@@ -374,14 +373,14 @@ function EtapeExercice({
           <Compteur label={duree ? 'Secondes tenues' : ex.unilateral ? 'Reps par côté' : 'Reps faites'} valeur={reps} onChange={setReps} pas={duree ? 5 : 1} />
           {ex.chargeable && profil.kettlebells.length > 0 && (
             <div className="space-y-2">
-              <p className="text-zinc-300">Charge</p>
+              <p className="text-ivoire/85">Charge</p>
               <div className="flex flex-wrap gap-2">
                 {profil.kettlebells.map((k) => (
                   <button
                     key={k}
                     type="button"
                     onClick={() => setCharge(k)}
-                    className={`h-12 min-w-16 rounded-xl px-3 font-semibold ${charge === k ? 'bg-lime-400 text-zinc-950' : 'bg-zinc-800'}`}
+                    className={`h-12 min-w-16 rounded-xl px-3 font-semibold ${charge === k ? 'bg-dore text-fond' : 'bg-carte2'}`}
                   >
                     {k} kg
                   </button>
@@ -393,18 +392,18 @@ function EtapeExercice({
           <button
             type="button"
             onClick={() => setDouleur(!douleur)}
-            className={`min-h-14 w-full rounded-2xl text-lg font-semibold ${douleur ? 'bg-red-500 text-white' : 'bg-zinc-800 text-red-300'}`}
+            className={`min-h-14 w-full rounded-2xl text-lg font-semibold ${douleur ? 'bg-douleur text-white' : 'bg-carte2 text-douleur'}`}
           >
             {douleur ? 'Douleur signalée' : 'Douleur ?'}
           </button>
-          {douleur && <p className="text-sm text-red-300">Arrête cet exercice s’il fait mal. Il sera remplacé par une version plus sûre la prochaine fois.</p>}
+          {douleur && <p className="text-sm text-douleur">Arrête cet exercice s’il fait mal. Il sera remplacé par une version plus sûre la prochaine fois.</p>}
         </Carte>
       ) : null}
 
       <Bouton className="w-full" disabled={suivie && rpe == null} onClick={valider}>
         {suivie ? 'Valider la série' : 'Fait'}
       </Bouton>
-      {suivie && rpe == null && <p className="text-center text-sm text-zinc-400">Indique ton ressenti pour valider.</p>}
+      {suivie && rpe == null && <p className="text-center text-sm text-ivoire2">Indique ton ressenti pour valider.</p>}
       <Bouton variante="fantome" className="w-full" onClick={onPasser}>
         Passer
       </Bouton>
@@ -435,7 +434,7 @@ function EtapeCourse({ seance, onFini }: { seance: TSeance; onFini: (c: NonNulla
         <button
           type="button"
           onClick={() => setDouleur(!douleur)}
-          className={`min-h-14 w-full rounded-2xl text-lg font-semibold ${douleur ? 'bg-red-500 text-white' : 'bg-zinc-800 text-red-300'}`}
+          className={`min-h-14 w-full rounded-2xl text-lg font-semibold ${douleur ? 'bg-douleur text-white' : 'bg-carte2 text-douleur'}`}
         >
           {douleur ? 'Douleur signalée' : 'Douleur ?'}
         </button>
@@ -449,11 +448,11 @@ function EtapeCourse({ seance, onFini }: { seance: TSeance; onFini: (c: NonNulla
   const seg = segments[Math.max(0, i)]
   const nbBlocs = segments.filter((s) => s.genre === 'course').length
   return (
-    <Carte className={`space-y-6 py-8 text-center ${i >= 0 && seg.genre === 'course' ? 'bg-lime-950!' : ''}`}>
+    <Carte className={`space-y-6 py-8 text-center ${i >= 0 && seg.genre === 'course' ? 'bg-sauge/25!' : ''}`}>
       <Pastille>{libelleBloc(seance.plan.course!)}</Pastille>
       {i < 0 ? (
         <>
-          <p className="text-zinc-300">Bip à chaque changement. Rythme où tu peux parler.</p>
+          <p className="text-ivoire/85">Bip à chaque changement. Rythme où tu peux parler.</p>
           <Bouton
             className="w-full"
             onClick={() => {
@@ -467,10 +466,10 @@ function EtapeCourse({ seance, onFini }: { seance: TSeance; onFini: (c: NonNulla
         </>
       ) : (
         <>
-          <p className={`text-5xl font-black ${seg.genre === 'course' ? 'text-lime-300' : 'text-sky-300'}`}>{seg.genre === 'course' ? 'COURS' : 'MARCHE'}</p>
+          <p className={`text-5xl font-black ${seg.genre === 'course' ? 'text-sauge-clair' : 'text-sauge-clair'}`}>{seg.genre === 'course' ? 'COURS' : 'MARCHE'}</p>
           <p className="font-mono text-7xl font-bold tabular-nums">{fmtDuree(compte.reste)}</p>
           {nbBlocs > 1 && (
-            <p className="text-zinc-400">
+            <p className="text-ivoire2">
               Bloc {seg.bloc} / {nbBlocs}
             </p>
           )}
