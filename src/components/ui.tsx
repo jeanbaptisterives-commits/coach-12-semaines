@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 
 // Gros boutons : utilisables en pleine séance, mains moites, téléphone posé par terre.
 
@@ -66,15 +66,45 @@ export function Compteur({
   label?: string
 }) {
   const fixer = (v: number) => onChange(Math.min(max, Math.max(min, Math.round(v * 100) / 100)))
+  // La valeur se tape aussi au clavier numérique (virgule acceptée) ; elle est bornée en quittant le champ.
+  const [saisie, setSaisie] = useState<string | null>(null)
+  const id = useId()
+  const valider = () => {
+    if (saisie == null) return
+    const v = Number(saisie.replace(',', '.'))
+    if (saisie.trim() !== '' && Number.isFinite(v)) fixer(v)
+    setSaisie(null)
+  }
+  const decimal = !Number.isInteger(pas)
   return (
     <div className="flex items-center justify-between gap-3">
-      {label && <span className="text-ivoire/85">{label}</span>}
+      {label && (
+        <label htmlFor={id} className="text-ivoire/85">
+          {label}
+        </label>
+      )}
       <div className="flex items-center gap-3">
         <button type="button" aria-label="moins" onClick={() => fixer(valeur - pas)} className="size-14 rounded-2xl bg-carte2 text-3xl active:bg-ligne">
           −
         </button>
-        <span className="min-w-20 text-center text-3xl font-bold tabular-nums">
-          {valeur}
+        <span className="flex min-w-20 items-baseline justify-center gap-0.5">
+          <input
+            id={id}
+            type="text"
+            inputMode={decimal ? 'decimal' : 'numeric'}
+            enterKeyHint="done"
+            aria-label={label ?? 'Valeur'}
+            value={saisie ?? String(valeur).replace('.', ',')}
+            onFocus={(e) => {
+              setSaisie(String(valeur).replace('.', ','))
+              requestAnimationFrame(() => e.target.select())
+            }}
+            onChange={(e) => setSaisie(e.target.value.replace(/[^0-9.,]/g, ''))}
+            onBlur={valider}
+            onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+            className="w-24 rounded-xl bg-transparent text-center text-3xl font-bold tabular-nums focus:bg-carte2 focus:outline-2 focus:outline-dore"
+            style={{ width: `${Math.max(2.5, String(valeur).length + 1)}ch` }}
+          />
           {suffixe && <span className="text-lg text-ivoire2">{suffixe}</span>}
         </span>
         <button type="button" aria-label="plus" onClick={() => fixer(valeur + pas)} className="size-14 rounded-2xl bg-carte2 text-3xl active:bg-ligne">
