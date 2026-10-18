@@ -72,7 +72,8 @@ export interface Mouvement {
 // ---------- Base locale ----------
 
 export type ModeConso = 'joint_tabac' | 'joint_pur' | 'vaporisateur'
-export type TypeSeance = 'A' | 'B' | 'C' | 'express'
+export type TypeSeance = 'A' | 'B' | 'C' | 'express' | 'etirement'
+export type Programme = '12semaines' | 'carte'
 export type Jour = 0 | 1 | 2 | 3 | 4 | 5 | 6 // 0 = dimanche (Date.getDay)
 
 export interface Profil {
@@ -85,6 +86,7 @@ export interface Profil {
   feuVertMedical: boolean
   barreTraction: boolean
   dateDebut: string // AAAA-MM-JJ, lundi de la semaine 1
+  programme?: Programme // défaut : 12semaines
   creeLe: string
 }
 
@@ -115,6 +117,8 @@ export interface Seance {
   course?: CourseRealisee
   dureeSec: number
   terminee: boolean
+  etirement?: string // id du programme d'étirement (type 'etirement')
+  conseil?: string // conseil du coach après la séance
 }
 
 export interface EtatExercice {
@@ -212,4 +216,18 @@ export interface MotCoach {
     repsCible?: Record<string, number> // exerciceId -> reps (ou secondes)
     course?: { courseSec: number; marcheSec: number; blocs: number; continueMin: number }
   }
+}
+
+export interface ProgrammeEtirement {
+  id: string
+  nom: string
+  quand: string // moment conseillé
+  description: string
+  exercices: Array<{ id: string; sec?: number; reps?: number }>
+}
+
+export interface MessageCoach {
+  role: 'moi' | 'coach'
+  texte: string
+  le: string // ISO
 }

@@ -10,6 +10,7 @@ export function joursTries(profil: Profil): number[] {
 
 // Séance prévue ce jour-là : A, B, C dans l'ordre des jours de la semaine (mardi A, jeudi B, samedi C par défaut).
 export function typeDuJour(profil: Profil, iso: string): TypeSeance | null {
+  if (profil.programme === 'carte') return null // à la carte : rien d'imposé, JB choisit selon son envie
   const i = joursTries(profil).indexOf(jourSemaine(iso))
   return i === -1 ? null : ORDRE[i % ORDRE.length]
 }
@@ -20,8 +21,9 @@ export function joursPrevus(profil: Profil, de: string, a: string): string[] {
   return res
 }
 
+// Une séance d'étirement ne remplace pas une séance du programme.
 function faiteLe(seances: Seance[], iso: string): boolean {
-  return seances.some((s) => s.date === iso && s.terminee)
+  return seances.some((s) => s.date === iso && s.terminee && s.type !== 'etirement')
 }
 
 // Une séance prévue dans les 2 derniers jours n'a pas été faite, et rien n'est encore fait aujourd'hui :
@@ -32,7 +34,7 @@ export function seanceManquee(profil: Profil, seances: Seance[], aujourdhui: str
     const d = ajouterJours(aujourdhui, -i)
     if (d < profil.dateDebut) break
     if (typeDuJour(profil, d) && !faiteLe(seances, d)) {
-      const rattrapee = seances.some((s) => s.terminee && s.date > d && s.date < aujourdhui)
+      const rattrapee = seances.some((s) => s.terminee && s.type !== 'etirement' && s.date > d && s.date < aujourdhui)
       return rattrapee ? null : d
     }
   }

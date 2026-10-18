@@ -4,12 +4,14 @@ import { defineConfig } from 'vitest/config'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // base relative : l'app marche aussi bien à la racine (Netlify) que dans un sous-dossier (GitHub Pages).
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: './',
+  // Mode « artefact » : la page tourne dans claude.ai, sans service worker (refusé par le cadre).
+  build: mode === 'artefact' ? { outDir: 'dist-artefact' } : undefined,
   plugins: [
     react(),
     tailwindcss(),
-    VitePWA({
+    mode === 'artefact' ? null : VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icon-180.png'],
       manifest: {
@@ -38,4 +40,4 @@ export default defineConfig({
   test: {
     environment: 'node',
   },
-})
+}))

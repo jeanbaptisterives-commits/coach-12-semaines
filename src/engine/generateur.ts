@@ -7,6 +7,7 @@ import type {
   MotCoach,
   PrescriptionExercice,
   Profil,
+  ProgrammeEtirement,
   SeancePlanifiee,
   TypeSeance,
 } from '../types'
@@ -307,4 +308,19 @@ export function raisonParDefaut(type: TypeSeance, phase: 1 | 2 | 3): string {
   if (phase === 1) return 'Phase fondation : volume léger, on soigne la technique et la régularité'
   if (phase === 2) return 'Phase montée : charges et course continue progressent séance après séance'
   return 'Phase performance : on vise les tests de la semaine 12'
+}
+
+// Séance d'étirement : le programme choisi, exercice par exercice, une seule série chacun.
+export function genererEtirement(prog: ProgrammeEtirement, lib: Exercice[], profil: Profil): SeancePlanifiee {
+  const principal: PrescriptionExercice[] = prog.exercices
+    .map((x) => ({ x, ex: lib.find((e) => e.id === x.id) }))
+    .filter((o): o is { x: (typeof prog.exercices)[number]; ex: Exercice } => !!o.ex && estAutorise(o.ex, profil))
+    .map(({ x, ex }) => ({
+      exerciceId: ex.id,
+      series: 1,
+      reps: x.sec ?? x.reps ?? (ex.fourchette ? ex.fourchette[0] : 30),
+      reposSec: 10,
+    }))
+  const plan = { type: 'etirement' as const, echauffement: [], principal, retourCalme: [], raison: `${prog.nom} : ${prog.description}`, allegee: false }
+  return { ...plan, dureeEstimeeMin: dureeEstimee(plan, lib) }
 }

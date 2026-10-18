@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { db, exporter, importer } from '../db/db'
+import { enArtefact, telechargerCloud } from '../db/cloud'
 import { aujourdhui } from '../db/actions'
 import type { Jour, Profil } from '../types'
 import { Bouton, Carte, Choix, Compteur, Titre } from '../components/ui'
@@ -10,11 +11,17 @@ const POIDS_KB = [4, 6, 8, 10, 12, 14, 16, 18, 20, 24, 28, 32]
 export function Reglages({ profil }: { profil: Profil }) {
   const fichier = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState('')
+  const [aImporter, setAImporter] = useState<unknown>(null)
+  const [confirmerFeuVert, setConfirmerFeuVert] = useState(false)
   const maj = (p: Partial<Profil>) => db.profil.update('moi', p)
   const basculer = <T,>(liste: T[], v: T) => (liste.includes(v) ? liste.filter((x) => x !== v) : [...liste, v])
 
   async function telecharger() {
     const json = JSON.stringify(await exporter(), null, 2)
+    if (enArtefact()) {
+      setMessage((await telechargerCloud(`coach-12-semaines-${aujourdhui()}.json`, json)) ? 'Sauvegarde enregistrée.' : 'Sauvegarde annulée.')
+      return
+    }
     const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }))
     const a = document.createElement('a')
     a.href = url
@@ -26,10 +33,8 @@ export function Reglages({ profil }: { profil: Profil }) {
 
   async function restaurer(f: File) {
     try {
-      const json = JSON.parse(await f.text())
-      if (!confirm('Remplacer toutes les données de l’app par cette sauvegarde ?')) return
-      await importer(json)
-      setMessage('Sauvegarde restaurée.')
+      setAImporter(JSON.parse(await f.text()))
+      setMessage('')
     } catch (e) {
       setMessage(e instanceof Error ? e.message : 'Fichier illisible.')
     }
@@ -38,6 +43,26 @@ export function Reglages({ profil }: { profil: Profil }) {
   return (
     <div className="space-y-4 pt-2">
       <h1 className="text-3xl font-bold">Réglages</h1>
+
+      <Carte className="space-y-3">
+        <Titre>Programme</Titre>
+        <div className="grid grid-cols-2 gap-2">
+          {([
+            { id: '12semaines', nom: '12 semaines', detail: '3 séances guidées par semaine, tests aux semaines 4, 8 et 12' },
+            { id: 'carte', nom: 'À la carte', detail: 'Rien d’imposé : tu choisis chaque jour selon ton envie' },
+          ] as const).map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => maj({ programme: p.id })}
+              className={`rounded-2xl p-3 text-left ${(profil.programme ?? '12semaines') === p.id ? 'bg-dore text-fond' : 'bg-carte2'}`}
+            >
+              <span className="block font-semibold">{p.nom}</span>
+              <span className={`block text-xs ${(profil.programme ?? '12semaines') === p.id ? 'text-fond/80' : 'text-ivoire2'}`}>{p.detail}</span>
+            </button>
+          ))}
+        </div>
+      </Carte>
 
       <Carte className="space-y-4">
         <Titre>Feu vert médical</Titre>
@@ -49,13 +74,26 @@ export function Reglages({ profil }: { profil: Profil }) {
             type="checkbox"
             checked={profil.feuVertMedical}
             onChange={(e) => {
-              if (e.target.checked && !confirm('Tu confirmes avoir fait l’ECG et le bilan sanguin, et que ton médecin est d’accord ?')) return
-              maj({ feuVertMedical: e.target.checked })
+              if (e.target.checked) setConfirmerFeuVert(true)
+              else maj({ feuVertMedical: false })
             }}
             className="size-7 accent-[#c4a35a]"
           />
           <span className="text-lg">ECG et bilan sanguin faits, feu vert</span>
         </label>
+        {confirmerFeuVert && !profil.feuVertMedical && (
+          <div className="space-y-3 rounded-2xl bg-carte2 p-4">
+            <p>Tu confirmes avoir fait l’ECG et le bilan sanguin, et que ton médecin est d’accord ?</p>
+            <div className="flex gap-2">
+              <Bouton className="flex-1 text-base" onClick={() => { maj({ feuVertMedical: true }); setConfirmerFeuVert(false) }}>
+                Oui, c’est fait
+              </Bouton>
+              <Bouton variante="secondaire" className="flex-1 text-base" onClick={() => setConfirmerFeuVert(false)}>
+                Pas encore
+              </Bouton>
+            </div>
+          </div>
+        )}
       </Carte>
 
       <Carte className="space-y-3">
@@ -123,6 +161,31 @@ export function Reglages({ profil }: { profil: Profil }) {
           Importer une sauvegarde
         </Bouton>
         <input ref={fichier} type="file" accept="application/json,.json" hidden onChange={(e) => e.target.files?.[0] && restaurer(e.target.files[0])} />
+        {aImporter != null && (
+          <div className="space-y-3 rounded-2xl bg-carte2 p-4">
+            <p>Remplacer toutes les données de l’app par cette sauvegarde ?</p>
+            <div className="flex gap-2">
+              <Bouton
+                variante="danger"
+                className="flex-1 text-base"
+                onClick={async () => {
+                  try {
+                    await importer(aImporter)
+                    setMessage('Sauvegarde restaurée.')
+                  } catch (e) {
+                    setMessage(e instanceof Error ? e.message : 'Fichier illisible.')
+                  }
+                  setAImporter(null)
+                }}
+              >
+                Remplacer
+              </Bouton>
+              <Bouton variante="secondaire" className="flex-1 text-base" onClick={() => setAImporter(null)}>
+                Annuler
+              </Bouton>
+            </div>
+          </div>
+        )}
         {message && <p className="text-sauge-clair">{message}</p>}
       </Carte>
 

@@ -15,6 +15,8 @@ const DIST = join(RACINE, 'dist')
 export const DOSSIER = process.env.COACH_DONNEES ?? join(homedir(), 'Work', 'coach-12-semaines-donnees')
 const TOSHIBA = process.env.COACH_COPIE ?? '/Volumes/TOSHIBA EXT/Coach-12-semaines'
 const FICHIER = join(DOSSIER, 'donnees.json')
+// Noms d'hôte acceptés en plus de localhost : l'adresse Tailscale du Mac (réseau privé de JB, téléphone compris).
+const HOTES_TAILSCALE = (process.env.COACH_HOTES ?? 'almadhome.tail86b509.ts.net,almadhome,100.127.185.28').split(',').filter(Boolean)
 const COACH = join(DOSSIER, 'coach.json')
 
 const TYPES = {
@@ -86,7 +88,7 @@ export function creerServeur() {
     // Anti « DNS rebinding » : un site malveillant ouvert dans le navigateur ne doit jamais pouvoir
     // lire ou écrire les données. On n'accepte que l'adresse locale, et l'écriture que depuis l'app.
     const port = req.socket.localPort
-    const locaux = [`localhost:${port}`, `127.0.0.1:${port}`]
+    const locaux = [`localhost:${port}`, `127.0.0.1:${port}`, ...HOTES_TAILSCALE]
     if (!locaux.includes(req.headers.host ?? '')) {
       res.writeHead(403)
       return res.end()

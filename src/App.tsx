@@ -7,6 +7,8 @@ import { Bibliotheque, PageExercice, PageFamille, PageMouvement } from './screen
 import { Onboarding } from './screens/Onboarding'
 import { Reglages } from './screens/Reglages'
 import { Seance } from './screens/Seance'
+import { Coach } from './screens/Coach'
+import { Etirements } from './screens/Etirements'
 import { Poids, Tests } from './screens/Tests'
 
 // Les graphiques (Recharts) ne se chargent qu'à l'ouverture de l'onglet Progrès.
@@ -31,6 +33,9 @@ function Coquille() {
         <Routes>
           <Route path="/" element={<Accueil profil={profil} />} />
           <Route path="/seance/:type" element={<Seance profil={profil} />} />
+          <Route path="/seance/:type/:prog" element={<Seance profil={profil} />} />
+          <Route path="/coach" element={<Coach />} />
+          <Route path="/etirements" element={<Etirements />} />
           <Route path="/exercices" element={<Bibliotheque />} />
           <Route path="/exercices/f/:famille" element={<PageFamille />} />
           <Route path="/exercices/m/:mouvement" element={<PageMouvement />} />

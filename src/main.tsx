@@ -4,11 +4,12 @@ import './index.css'
 import App from './App.tsx'
 
 import { appliquerReglagesCoach, chargerCoach, demarrerSync } from './db/sync'
+import { demarrerCloud } from './db/cloud'
 
-// Sur le Mac : on récupère d'abord le fichier de données (sinon l'app croirait à un premier lancement),
-// puis les réglages du coach. En ligne (GitHub Pages) ces deux appels ne font rien.
+// On récupère d'abord les données (sinon l'app croirait à un premier lancement), puis les réglages du coach.
 async function lancer() {
-  if (await demarrerSync()) {
+  // Dans l'artefact Claude : la base de l'artefact. Sur le Mac : le serveur local. Sinon : le navigateur seul.
+  if ((await demarrerCloud()) || (await demarrerSync())) {
     const coach = await chargerCoach()
     if (coach) await appliquerReglagesCoach(coach)
   }

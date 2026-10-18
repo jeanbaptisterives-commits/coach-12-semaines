@@ -2,7 +2,8 @@ import { EXERCICES, EXERCICES_PAR_ID } from '../data/exercices'
 import { etatCourseInitial, progresserCourse } from '../engine/course'
 import { ajouterJours, isoLocal, phaseDe, semaineDe } from '../engine/dates'
 import { scoreForme } from '../engine/forme'
-import { genererSeance, seriesParPhase } from '../engine/generateur'
+import { genererEtirement, genererSeance, seriesParPhase } from '../engine/generateur'
+import { ETIREMENT_PAR_ID } from '../data/etirements'
 import { appliquerProgression, etatInitial } from '../engine/progression'
 import type { EtatExercice, Profil, Seance, TypeSeance } from '../types'
 import { db, type BaseCoach } from './db'
@@ -19,10 +20,20 @@ export async function etatCourse(base: BaseCoach = db) {
 }
 
 // Prépare la séance du jour (sans l'enregistrer) à partir de tout l'historique.
-export async function preparerSeance(type: TypeSeance, date = aujourdhui(), base: BaseCoach = db): Promise<Seance> {
+export async function preparerSeance(type: TypeSeance, date = aujourdhui(), base: BaseCoach = db, etirement?: string): Promise<Seance> {
   const profil = await chargerProfil(base)
   if (!profil) throw new Error('Profil manquant')
   const semaine = Math.max(1, semaineDe(profil.dateDebut, date))
+  if (type === 'etirement') {
+    const prog = ETIREMENT_PAR_ID[etirement ?? '']
+    if (!prog) throw new Error('Programme d’étirement inconnu')
+    const plan = genererEtirement(prog, EXERCICES, profil)
+    return {
+      date, type, semaine, phase: phaseDe(semaine), zeroJoint: false, raison: plan.raison, allegee: false, plan,
+      exercices: plan.principal.map((p) => ({ exerciceId: p.exerciceId, prevu: p, series: [] })),
+      dureeSec: 0, terminee: false, etirement: prog.id,
+    }
+  }
   const etats = Object.fromEntries((await base.etats.toArray()).map((e) => [e.exerciceId, e]))
   const course = await etatCourse(base)
   const forme = scoreForme(await base.journal.get(date), await base.journal.get(ajouterJours(date, -1)))

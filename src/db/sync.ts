@@ -3,6 +3,7 @@ import { EXERCICES } from '../data/exercices'
 import { isoLocal } from '../engine/dates'
 import type { EtatExercice, MotCoach } from '../types'
 import { db, exporter, importer, TABLES, type BaseCoach } from './db'
+import { cloudActif, lireCoachCloud } from './cloud'
 
 // Version Mac : un serveur local sert l'app et garde les données dans un fichier que Claude lit.
 // Le navigateur garde une copie (IndexedDB) ; le fichier du Mac fait foi.
@@ -89,10 +90,22 @@ export async function demarrerSync(base: BaseCoach = db): Promise<boolean> {
       },
     })
   addEventListener('online', () => lire(CLE_ATTENTE) && envoyer(base))
+  // Le Mac et le téléphone partagent le même fichier : en revenant sur l'app, on reprend la version
+  // du Mac (sauf si une saisie locale n'est pas encore partie, auquel cas on l'envoie d'abord).
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState !== 'visible') return
+    if (lire(CLE_ATTENTE)) return envoyer(base)
+    const frais = await appelJson('./api/donnees')
+    if (frais?.statut === 200 && !lire(CLE_ATTENTE)) {
+      premier = true // l'import n'est pas une saisie : ne pas le renvoyer
+      await importer(frais.json, base)
+    }
+  })
   return true
 }
 
 export async function chargerCoach(): Promise<MotCoach | null> {
+  if (cloudActif()) return lireCoachCloud()
   const r = await appelJson('./api/coach')
   return r?.statut === 200 ? (r.json as MotCoach) : null
 }

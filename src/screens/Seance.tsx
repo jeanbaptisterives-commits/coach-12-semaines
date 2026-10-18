@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { EXERCICES_PAR_ID } from '../data/exercices'
 import { aujourdhui, preparerSeance, terminerSeance } from '../db/actions'
+import { conseilApresSeance } from '../db/coachService'
+import { enArtefact } from '../db/cloud'
+import { db } from '../db/db'
 import { libelleBloc } from '../engine/course'
 import { construireEtapes, segmentsCourse, type Etape } from '../engine/etapes'
 import type { Profil, Seance as TSeance, SerieRealisee, TypeSeance } from '../types'
@@ -21,33 +24,35 @@ interface Brouillon {
   debut: number
 }
 
-function lireBrouillon(type: string): Brouillon | null {
+function lireBrouillon(type: string, prog?: string): Brouillon | null {
   try {
     const b = JSON.parse(localStorage.getItem(CLE_BROUILLON) ?? 'null') as Brouillon | null
-    return b && b.seance.type === type && b.seance.date === aujourdhui() ? b : null
+    return b && b.seance.type === type && (b.seance.etirement ?? '') === (prog ?? '') && b.seance.date === aujourdhui() ? b : null
   } catch {
     return null
   }
 }
 
 export function Seance({ profil }: { profil: Profil }) {
-  const { type } = useParams<{ type: TypeSeance }>()
+  const { type, prog } = useParams<{ type: TypeSeance; prog?: string }>()
   const nav = useNavigate()
   const [seance, setSeance] = useState<TSeance | null>(null)
   const [pas, setPas] = useState(-1) // -1 = avant de démarrer
   const [debut, setDebut] = useState(0)
   const [fin, setFin] = useState<string[] | null>(null)
+  const [conseil, setConseil] = useState<string | null>(null)
+  const [confirmerFin, setConfirmerFin] = useState(false)
   const [fiche, setFiche] = useState<string | null>(null)
   const [maintenant, setMaintenant] = useState(Date.now())
 
   useEffect(() => {
-    const b = lireBrouillon(type ?? '')
+    const b = lireBrouillon(type ?? '', prog)
     if (b) {
       setSeance(b.seance)
       setPas(b.pas)
       setDebut(b.debut)
-    } else if (type) preparerSeance(type).then(setSeance)
-  }, [type])
+    } else if (type) preparerSeance(type, aujourdhui(), undefined, prog).then(setSeance)
+  }, [type, prog])
 
   useEffect(() => {
     if (pas < 0 || fin) return
@@ -91,6 +96,16 @@ export function Seance({ profil }: { profil: Profil }) {
       /* rien */
     }
     setFin(msgs)
+    // Le retour du coach, enregistré avec la séance pour que Claude le retrouve.
+    if (enArtefact()) {
+      setConseil('…')
+      const c = await conseilApresSeance()
+      setConseil(c)
+      if (c) {
+        const derniere = await db.seances.orderBy('id').last()
+        if (derniere?.id != null) await db.seances.update(derniere.id, { conseil: c })
+      }
+    }
   }
 
   function avancer(s: TSeance) {
@@ -122,6 +137,12 @@ export function Seance({ profil }: { profil: Profil }) {
             <p className="text-ivoire2">{seance.allegee ? 'Séance allégée : les cibles restent les mêmes.' : 'Mêmes cibles la prochaine fois.'}</p>
           )}
         </Carte>
+        {conseil && (
+          <Carte className="space-y-2 border border-sauge/40">
+            <Titre>Le coach</Titre>
+            <p className="text-lg leading-relaxed">{conseil === '…' ? 'Le coach regarde ta séance…' : conseil}</p>
+          </Carte>
+        )}
         <Bouton className="w-full" onClick={() => nav('/')}>
           Retour à l’accueil
         </Bouton>
@@ -166,9 +187,15 @@ export function Seance({ profil }: { profil: Profil }) {
         <Bouton variante="fantome" onClick={() => pas > 0 && setPas(pas - 1)} disabled={pas === 0}>
           Étape précédente
         </Bouton>
-        <Bouton variante="fantome" onClick={() => confirm('Finir la séance maintenant ? Ce qui est fait est enregistré.') && terminer(seance)}>
-          Finir ici
-        </Bouton>
+        {confirmerFin ? (
+          <Bouton variante="danger" className="text-base" onClick={() => terminer(seance)}>
+            Oui, finir ici
+          </Bouton>
+        ) : (
+          <Bouton variante="fantome" onClick={() => setConfirmerFin(true)}>
+            Finir ici
+          </Bouton>
+        )}
       </div>
       <Modale ouvert={!!fiche} titre={fiche ? parId(fiche)?.nom ?? '' : ''} onFermer={() => setFiche(null)}>
         {fiche && parId(fiche) && <Fiche ex={parId(fiche)} />}
@@ -216,8 +243,12 @@ function Avant({
         <p className="text-lg">{seance.raison}</p>
       </Carte>
       <Carte>
-        <Titre>Échauffement</Titre>
-        <ul className="divide-y divide-ligne">{p.echauffement.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
+        {p.echauffement.length > 0 && (
+          <>
+            <Titre>Échauffement</Titre>
+            <ul className="divide-y divide-ligne">{p.echauffement.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
+          </>
+        )}
         {p.course && (
           <>
             <Titre>Course</Titre>
@@ -227,12 +258,16 @@ function Avant({
         )}
         {p.principal.length > 0 && (
           <>
-            <Titre>{seance.type === 'C' ? 'Circuit et mobilité' : 'Exercices'}</Titre>
+            <Titre>{seance.type === 'C' ? 'Circuit et mobilité' : seance.type === 'etirement' ? 'Programme' : 'Exercices'}</Titre>
             <ul className="divide-y divide-ligne">{p.principal.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
           </>
         )}
-        <Titre>Retour au calme</Titre>
-        <ul className="divide-y divide-ligne">{p.retourCalme.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
+        {p.retourCalme.length > 0 && (
+          <>
+            <Titre>Retour au calme</Titre>
+            <ul className="divide-y divide-ligne">{p.retourCalme.map((x) => ligne(x.exerciceId, detail(x)))}</ul>
+          </>
+        )}
       </Carte>
       <label className="flex min-h-16 items-center gap-4 rounded-3xl bg-carte px-5">
         <input type="checkbox" checked={seance.zeroJoint} onChange={(e) => onChange({ ...seance, zeroJoint: e.target.checked })} className="size-7 accent-[#c4a35a]" />
